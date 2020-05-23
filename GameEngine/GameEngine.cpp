@@ -161,6 +161,7 @@ void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int n
 }
 
 int GameEngine::playerTurn(std::string playerTurnCommand){
+    Input input;
     int toReturn = 1;
     std::stringstream commandLine(playerTurnCommand);
     std::string commandPart;
@@ -175,8 +176,16 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
         counter++;
     }
 
-    if(!this->use2ndFactory)
+    if(use2ndFactory && !normalFactoriesAreEmpty() && (commands[1] != "0" && commands[1] != "1")){
+        gec->promptUser("Which central factory do you want to discard to?");
+        commands[4] = input.getString();
+    }else{
+        commands[4] = commands[1];
+    }
+    
+    if (!this->use2ndFactory){
         commands[4] = "0";
+    }
 
     for(int i = 0; i<5; ++i){
         std::cout <<"Printing command [" << i << "] : " + commands[i] <<std::endl;
@@ -193,10 +202,9 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
         //validate the three command arguments first before proceeding
         if(checkCommand1(commands[1], factoryNo) && checkCommand2(commands[2], tileType) 
             && checkCommand3(commands[3],storageRow) && checkCommand4(commands[4],centralFactoryNo,factoryNo)){
+            
             if(factoryNo == 0 || (use2ndFactory && (factoryNo == 0 || factoryNo == 1))){
                 if(centralFactoryOnlyHasFirstTile(centralFactoryNo)){
-                std::cout<<"TEST"<<std::endl;
-                    
                     toReturn = Error_Message::NO_TILES_IN_CENTRAL;
                 }
             }
@@ -215,6 +223,8 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
                     }
                 } else {
                     if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,centralFactoryNo,(storageRow-1),tileType, true)) {
+                        
+                        std::cout << "moveTilesFromFactory done" <<std::endl;
                         toReturn = Error_Message::SUCCESS;
                     } else {
                         toReturn = Error_Message::INVALID_MOVE;
@@ -322,12 +332,13 @@ bool GameEngine::normalFactoriesAreEmpty(){
     bool empty = true;
     bool breakLoop = false;
     int counter = 1;
+
     if(use2ndFactory)
         counter = 2;
 
-    int stopIndex = counter + 5;
-    std::cout << "Counter max : " << stopIndex <<std::endl;
-    while(breakLoop == false && counter < stopIndex ){
+    int stopIndex = counter + NUM_NORMAL_FACTORIES;
+    
+    while( counter < stopIndex && breakLoop == false){
         std::cout<< counter<< std::endl;
         if(factories[counter]->getAllTiles().size() > 0){
             empty = false;
@@ -356,7 +367,7 @@ bool GameEngine::centralFactoryOnlyHasFirstTile(int centralFactoryNo){
     std::vector<std::shared_ptr<Tile>> centralFactory = factories[centralFactoryNo]->getAllTiles();
     int size = centralFactory.size();
 
-    if(size == 1 && centralFactory[centralFactoryNo]->getType() == Type::FIRST_PLAYER)
+    if(size == 1 && centralFactory[0]->getType() == Type::FIRST_PLAYER)
         success = true;
 
     return success;
@@ -365,9 +376,6 @@ bool GameEngine::centralFactoryOnlyHasFirstTile(int centralFactoryNo){
 //must check each round if there is a full row so the game can end
 bool GameEngine::winConditionMet(){
     bool winConditionMet = false;
-
-    // Mosaic* playerOneMosaic = this->playerOne->getMosaicStorage()->getMosaic();
-    // Mosaic* playerTwoMosaic = this->playerTwo->getMosaicStorage()->getMosaic();
 
     for(int i = 0; i<noOfPlayers; ++i){
         if(this->players[i]->getMosaicStorage()->getMosaic()->findFullRow()){
@@ -483,6 +491,7 @@ void GameEngine::endOfRoundPreparations(){
 
 bool GameEngine::moveTilesFromFactory(std::shared_ptr<Player> player,unsigned const int factoryNumber,int centralFactoryNo,unsigned const int row, const Type type, const bool toBroken) {
     bool turnSuccess = true;
+
     if (toBroken)
 
         //need to take into consideration wanting to move tiles to broken tiles manually
@@ -703,6 +712,7 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
             gec->playerTurnUpdate(this->players[currentTurn]->getName());
 
             std::string playerCommand = "";
+            std::string centralCommandToDiscardTo = "";
             int turnResult = 0;
             while(!endOfCommands && !std::cin.eof() && (turnResult != 1)){
                 playerCommand = input.getString();
@@ -741,11 +751,11 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
         calculateEndGamePoints();
 
         // When testing, we save the game before it ends to see the end of game save file
-        if (testing) {
-            GameEngineIO* geIO = new GameEngineIO(this);
-            geIO->saveGame("actualoutcome.save");
-            delete geIO;
-        }
+        // if (testing) {
+        //     GameEngineIO* geIO = new GameEngineIO(this);
+        //     geIO->saveGame("actualoutcome.save");
+        //     delete geIO;
+        // }
 
         resetGame();
     }
@@ -773,6 +783,7 @@ void GameEngine::resetGame(){
     for(int i = 0; i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); i++){
         factories[i]->clear();
     }
+    players.clear();
     factories.clear();
     bag->clear();
     boxLid->clear();

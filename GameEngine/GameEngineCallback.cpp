@@ -39,8 +39,8 @@ void GameEngineCallback::playerBoardUpdate(std::vector<std::shared_ptr<Player>> 
     else if( noOfPlayers == 4){
         mStorage = players[2]->getMosaicStorage();
         mosaic = players[2]->getMosaicStorage()->getMosaic();   
-        mStorage = players[3]->getMosaicStorage();
-        mosaic = players[3]->getMosaicStorage()->getMosaic();    
+        mStorage1 = players[3]->getMosaicStorage();
+        mosaic1 = players[3]->getMosaicStorage()->getMosaic();    
         outputString += "Mosaic for " + players[2]->getName() + "\t\t\t" + "Mosaic for " + players[3]->getName() + "\n"
         + mStorage->rowToString(0) + mosaic->rowToString(0) + "\t" + mStorage1->rowToString(0) + mosaic1->rowToString(0) + "\n"
         + mStorage->rowToString(1) + mosaic->rowToString(1) + "\t" + mStorage1->rowToString(1) + mosaic1->rowToString(1) + "\n"
@@ -59,6 +59,10 @@ void GameEngineCallback::playerTurnUpdate(std::string playerName) {
 
 void GameEngineCallback::playerTurnResult(std::string turnResult) {
     std::cout << turnResult << std::endl;
+}
+
+void GameEngineCallback::promptUser(std::string prompt) {
+    std::cout << prompt << std::endl;
 }
 
 void GameEngineCallback::playerEndOfRoundResult(std::vector<std::shared_ptr<Player>> players, int noOfPlayers) {

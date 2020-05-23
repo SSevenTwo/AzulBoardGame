@@ -29,6 +29,9 @@ public:
     // Prints board components (factories)
     void boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory);
 
+    // General prompting of user
+    void promptUser(std::string prompt);
+
 private:
 
 
