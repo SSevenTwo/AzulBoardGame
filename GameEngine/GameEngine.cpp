@@ -141,7 +141,8 @@ int GameEngine::getSeed() const{
 
 //gameplay
 
-void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories, std::string gameMode) {
+void GameEngine::newGame(const std::string playerNames[], 
+    int noOfPlayers, int noOfFactories, std::string gameMode) {
 
     this->noOfPlayers = noOfPlayers;
     this->noOfCentralFactories = noOfFactories;
@@ -218,8 +219,10 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
         int centralFactoryNo;
 
         //validate the three command arguments first before proceeding
-        if(checkCommand1(commands[1], factoryNo) && checkCommand2(commands[2], tileType) 
-            && checkCommand3(commands[3],storageRow) && checkCommand4(commands[4],centralFactoryNo,factoryNo)){
+        if  (checkCommand1(commands[1], factoryNo) 
+            && checkCommand2(commands[2], tileType) 
+            && checkCommand3(commands[3],storageRow) 
+            && checkCommand4(commands[4],centralFactoryNo,factoryNo)){
                 
             if(factoryNo == 0 || (use2ndFactory && (factoryNo == 0 || factoryNo == 1))){
                 if(centralFactoryOnlyHasFirstTile(centralFactoryNo)){
@@ -234,13 +237,15 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
             //continue if the aforementioned checks pass
             if(toReturn == Error_Message::SUCCESS){
                 if (commands[3] != "B") {
-                    if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,centralFactoryNo,(storageRow-1),tileType, false)) {
+                    if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,
+                        centralFactoryNo,(storageRow-1),tileType, false)) {
                         toReturn = Error_Message::SUCCESS;
                     } else {
                         toReturn = Error_Message::INVALID_MOVE;
                     }
                 } else {
-                    if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,centralFactoryNo,(storageRow-1),tileType, true)) {
+                    if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,
+                        centralFactoryNo,(storageRow-1),tileType, true)) {
                         
                         toReturn = Error_Message::SUCCESS;
                     } else {
@@ -493,7 +498,9 @@ void GameEngine::movePlayerTilesToMosaic(){
                     int col = 0;
                     while(success == false){
                         gec->promptUser(this->players[i]->getName() + "'s turn to move from Storage to Mosaic.");
-                        gec->promptUser("Where do you want to move row " + std::to_string(row+1) + " tiles to? (Enter the column index)");
+                        gec->promptUser("Where do you want to move row " 
+                                + std::to_string(row+1) 
+                                + " tiles to? (Enter the column index)");
                         std::string colAsString = input.getString();
                         if (input.inputIsInt(colAsString)) {
                             std::stringstream sstream (colAsString);
@@ -502,9 +509,11 @@ void GameEngine::movePlayerTilesToMosaic(){
                                 success = playerMosaicStorage->greyModeEndOfRoundMove(row,col-1);
                             }
                         }
-                        gec->playerBoardUpdate(this->players, noOfPlayers); 
+                        gec->playerBoardUpdate(this->players, noOfPlayers);
                         if(!success){
-                            gec->promptUser("Error: Please enter a number from 1-5\n");
+                            std::string output = "Error: Please enter a number from 1-5.\n";
+                            output+= "Remember: Columns and Rows can only have 1 of a color.\n";
+                            gec->promptUser(output);;
                         }
                     }
                 }
@@ -553,7 +562,9 @@ bool GameEngine::moveTilesFromFactory(std::shared_ptr<Player> player,unsigned co
     return turnSuccess;
 }
 
-void GameEngine::moveTilesToMosaicStorage(std::shared_ptr<Player> player, unsigned const int factoryNumber,int centralFactoryNo, unsigned const int row,const Type type){
+void GameEngine::moveTilesToMosaicStorage(std::shared_ptr<Player> player, 
+    unsigned const int factoryNumber,int centralFactoryNo, unsigned const int row,const Type type){
+
     std::vector<std::shared_ptr<Tile>> allTiles =  factories[factoryNumber]->getCopiedTilesAndRemove();
     int size = allTiles.size();
     for(int i = 0; i < size; i++){
@@ -592,7 +603,9 @@ void GameEngine::removeOtherFirstPlayerToken(int centralFactory){
 
 }
 
-void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player, unsigned const int factoryNumber, const Type type){
+void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player, 
+    unsigned const int factoryNumber, const Type type){
+        
     int maxBrokenTiles = 7;
     std::vector<std::shared_ptr<Tile>> allTiles =  factories[factoryNumber]->getCopiedTilesAndRemove();
     std::shared_ptr<MosaicStorage> mosaicStorage = player->getMosaicStorage();

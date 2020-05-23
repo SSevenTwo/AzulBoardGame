@@ -24,6 +24,8 @@ void Menu::printWelcome() {
 }
 
 void Menu::runMenu() {
+
+    std::cout << "\033[1;31mbold red text\033[0m\n" << std::endl;
     std::cout << "----" << std::endl;
     std::cout << "Menu" << std::endl;
     std::cout << "----" << std::endl;
