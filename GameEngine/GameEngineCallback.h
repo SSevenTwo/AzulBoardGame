@@ -12,7 +12,7 @@ public:
     ~GameEngineCallback();
 
     // Prints board of a player
-    void playerBoardUpdate(std::vector<std::shared_ptr<Player>> players, int noOfPlayers);
+    void playerBoardUpdate(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, bool sixBySix);
 
     // Prints whose turn is it now
     void playerTurnUpdate(std::string playerName);

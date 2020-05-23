@@ -1,6 +1,8 @@
 #include "headers/BrokenTiles.h"
+#include <iostream>
 
-BrokenTiles::BrokenTiles() {
+BrokenTiles::BrokenTiles(int noOfTiles) {
+    this->maxNoOfTiles = noOfTiles;
     this->size = 0;
 }
 
@@ -27,8 +29,10 @@ unsigned int BrokenTiles::calculatePointsLost() {
         lostPoints = 8;
     } else if (numBrokenTiles == 6) {
         lostPoints = 11;
-    } else if (numBrokenTiles >= 7) {
+    } else if (numBrokenTiles == 7) {
         lostPoints = 14;
+    } else if (numBrokenTiles >= 8) {
+        lostPoints = 18;
     }
     return lostPoints;
 }
@@ -41,6 +45,7 @@ void BrokenTiles::clear() {
 }
 
 void BrokenTiles::addTile(std::shared_ptr<Tile> tile) {
+    std::cout<< "-----------------------------------------------------WHAT IS GOING ON" <<std::endl;
     tiles[size] = tile;
     ++size;
 }
@@ -51,7 +56,7 @@ std::string BrokenTiles::toString() {
         string += tiles[i]->getColourType();
         string += " ";
     }
-    for(int i = 0; i < (7-this->size); i++){
+    for(int i = 0; i < (maxNoOfTiles-this->size); i++){
         string += ".";
         string += " ";
     }

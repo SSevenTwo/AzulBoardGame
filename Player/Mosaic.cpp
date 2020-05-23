@@ -41,13 +41,14 @@ std::shared_ptr<Tile>** Mosaic::getGrid(){
 
 bool Mosaic::findFullRow(){
     bool fullRowFound = false;
-    int counter = 0;
+    unsigned int maxTiles = maxNoRows;
+    unsigned int counter = 0;
 
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 ++counter;
-                if(counter == MAX_NO_TILES){
+                if(counter == maxTiles){
                     fullRowFound = true;
                 }
             }
@@ -74,12 +75,12 @@ bool Mosaic::isRowFull(unsigned const int row) {
 
 bool Mosaic::findFullCol(unsigned int col){
     bool colIsFull = false;
-    int counter = 0;
+    unsigned int counter = 0;
 
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         if(grid[row][col] != nullptr){
             ++counter;
-            if(counter == MAX_NO_TILES){
+            if(counter == maxNoTiles){
                 colIsFull = true;
             }
         }
@@ -91,15 +92,15 @@ bool Mosaic::findFullCol(unsigned int col){
 int Mosaic::noOfFiveColours(){
     int timesGotAll5Colours = 0;
 
-    if(this->noOfBlacks == MAX_NO_TILES)
+    if(this->noOfBlacks == maxNoTiles)
         ++timesGotAll5Colours;
-    if(this->noOfReds == MAX_NO_TILES)
+    if(this->noOfReds == maxNoTiles)
         ++timesGotAll5Colours;
-    if(this->noOfDarkBlues == MAX_NO_TILES)
+    if(this->noOfDarkBlues == maxNoTiles)
         ++timesGotAll5Colours;
-    if(this->noOfLightBlues == MAX_NO_TILES)
+    if(this->noOfLightBlues == maxNoTiles)
         ++timesGotAll5Colours;
-    if(this->noOfYellows == MAX_NO_TILES)
+    if(this->noOfYellows == maxNoTiles)
         ++timesGotAll5Colours;
 
     return timesGotAll5Colours;
@@ -226,13 +227,21 @@ void Mosaic::incrementColorCounter(Type tileType){
         this->noOfLightBlues++;
     if(tileType == Type::YELLOW)
         this->noOfYellows++;
+    if(tileType == Type::ORANGE)
+        this->noOfOranges++;
 }
 
 int Mosaic::getColourColumn(unsigned const int row, unsigned const int colour) {
     int toReturn = -1;
-    if (row >= 0 && row < maxNoRows && colour >= 0 && colour < maxNoCols) {
+    if (!this->sixBySixMode && (row >= 0 && row < maxNoRows && colour >= 0 && colour < maxNoCols)) {
+        std::cout<<"BRO WRONG ONE"<<std::endl;
+
         toReturn = colourColumns[row][colour];
-    } 
+    } else{
+        toReturn = colourColumnsFor6x6[row][colour];
+        std::cout<< "ROW " << row <<std::endl;
+        std::cout<<"BRO RIGHT ONE " << toReturn << " COLOR " << colour <<std::endl;
+    }
     return toReturn;
 }
 
@@ -283,19 +292,18 @@ int Mosaic::calculateEndGamePoints() {
 
 
     endGamePoints += 2*numFullRows() + 7*numFullCols() + 10*noOfFiveColours();
-
     return endGamePoints;
 }
 
 int Mosaic::numFullCols() {
-    int counter = 0;
+    unsigned int counter = 0;
     int numCols = 0;
 
     for (unsigned int col = 0; col < maxNoCols; ++col) {
         for (unsigned int row = 0; row < maxNoRows; ++row) {
             if(grid[row][col] != nullptr){
                 ++counter;
-                if(counter == MAX_NO_TILES){
+                if(counter == maxNoTiles){
                     ++numCols;
                 }
             }
@@ -307,14 +315,14 @@ int Mosaic::numFullCols() {
 }
 
 int Mosaic::numFullRows() {
-    int counter = 0;
+    unsigned int counter = 0;
     int numRows = 0;
 
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 ++counter;
-                if(counter == MAX_NO_TILES){
+                if(counter == maxNoTiles){
                     ++numRows;
                 }
             }
@@ -331,16 +339,19 @@ void Mosaic::determineGameMode(std::string gameMode){
         this->sixBySixMode = false;
         this->maxNoRows = 5;
         this->maxNoCols = 5;
+        this->maxNoTiles = 5;
     } else if(gameMode == "six"){
         this->greyMode = false;
         this->sixBySixMode = true;
         this->maxNoRows = 6;
         this->maxNoCols = 6;
+        this->maxNoTiles = 6;
     }else{
         this->greyMode = false;
         this->sixBySixMode = false;
         this->maxNoRows = 5;
         this->maxNoCols = 5;
+        this->maxNoTiles = 5;
     }
 
     

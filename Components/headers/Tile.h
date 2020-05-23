@@ -9,6 +9,7 @@
 #define DARKBLUE_CHAR   'B'
 #define LIGHTBLUE_CHAR  'L'
 #define BLACK_CHAR      'U'
+#define ORANGE_CHAR     'O'
 #define FIRST_CHAR      'F'
 #define EMPTY           'X'
 
@@ -19,6 +20,7 @@ enum Type{
     DARK_BLUE,
     LIGHT_BLUE,
     BLACK,
+    ORANGE,
     FIRST_PLAYER,
     NONE
 };

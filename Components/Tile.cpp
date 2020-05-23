@@ -26,6 +26,8 @@ char Tile::getColourType() const{
         tileChar = 'L';
     if(type == Type::BLACK)
         tileChar = 'U';
+    if(type == Type::ORANGE)
+        tileChar = 'O';
     if(type == Type::FIRST_PLAYER)
         tileChar = 'F';
 

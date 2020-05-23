@@ -11,6 +11,7 @@ class MosaicStorage{
 public:
     MosaicStorage(std::string gameMode);
     ~MosaicStorage();
+    void determineGameMode(std::string gameMode, int& noOfBrokenTiles);
 
     //Getters
     std::shared_ptr<Tile>* getRow(unsigned const int row);
@@ -44,7 +45,6 @@ public:
     bool isValidStandardAdd(Type type, unsigned const int row);
     bool isValidGreyAdd(Type type, unsigned const int row);
     bool isValidSixBySixAdd(Type type, unsigned const int row);
-    void determineGameMode(std::string gameMode);
 
     //Printers
     std::string rowToString(int index);

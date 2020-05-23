@@ -54,18 +54,19 @@ public:
    
 private:
     std::shared_ptr<Tile>** grid;
-    int noOfReds;
-    int noOfYellows;
-    int noOfDarkBlues;
-    int noOfLightBlues;
-    int noOfBlacks;
-    int noOfOranges;
+    unsigned int noOfReds;
+    unsigned int noOfYellows;
+    unsigned int noOfDarkBlues;
+    unsigned int noOfLightBlues;
+    unsigned int noOfBlacks;
+    unsigned int noOfOranges;
     int pointsThisRound;
 
     bool greyMode;
     bool sixBySixMode;
     unsigned int maxNoRows;
     unsigned int maxNoCols;
+    unsigned int maxNoTiles;
 
     /* Represents the column in which the color belongs to
      * Col 1 = Red
@@ -74,6 +75,7 @@ private:
      * Col 4 = Light Blue
      * Col 5 = Black
      */
+
     int colourColumns[MAX_ROWS][MAX_COLS] = {
         {2, 1, 0, 4, 3} ,
         {3, 2, 1, 0, 4} ,
@@ -90,13 +92,13 @@ private:
      * Col 4 = Black
      * Col 5 = Orange
      */
-    int colourColumnsfor6x6[6][6] = {
+    int colourColumnsFor6x6[6][6] = {
         {2, 1, 0, 4, 3, 5} ,
-        {5, 2, 1, 0, 4, 3} ,
-        {3, 5, 2, 1, 0, 4} ,
-        {4, 3, 5, 2, 1, 0} ,
-        {0, 4, 3, 5, 2, 1} ,
-        {1, 0, 4, 3, 5, 2} ,
+        {3, 2, 1, 5, 4, 0} ,
+        {4, 3, 2, 0, 5, 1} ,
+        {5, 4, 3, 1, 0, 2} ,
+        {0, 5, 4, 2, 1, 3} ,
+        {1, 0, 5, 3, 2, 4} ,
     };
 
     char colourGrid[MAX_ROWS][MAX_COLS] = {
@@ -105,6 +107,15 @@ private:
         {'U', 'L', 'B', 'Y', 'R'} ,
         {'R', 'U', 'L', 'B', 'Y'} ,
         {'Y', 'R', 'U', 'L', 'B'} ,
+    };
+
+    const char colourGridFor6x6[6][6] = {
+        {'B', 'Y', 'R', 'U', 'L', 'O'} ,
+        {'O', 'B', 'Y', 'R', 'U', 'L'} ,
+        {'L', 'O', 'B', 'Y', 'R', 'U'} ,
+        {'U', 'L', 'O', 'B', 'Y', 'R'} ,
+        {'R', 'U', 'L', 'O', 'B', 'Y'} ,
+        {'Y', 'R', 'U', 'L', 'O' ,'B'}
     };
 
     char toSavecolourGrid[MAX_ROWS][MAX_COLS] = {

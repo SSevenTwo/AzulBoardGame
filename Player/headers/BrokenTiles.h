@@ -6,7 +6,7 @@
 
 class BrokenTiles{
 public:
-    BrokenTiles();
+    BrokenTiles(int noOfTiles);
     ~BrokenTiles();
 
     //Getters
@@ -25,8 +25,9 @@ public:
     std::string toSave();
     
 private:
-    std::shared_ptr<Tile> tiles[7];
+    std::shared_ptr<Tile> tiles[8];
     int size;
+    int maxNoOfTiles;
 };
 
 #endif // BROKENTILES_H

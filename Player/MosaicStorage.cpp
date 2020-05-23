@@ -3,7 +3,10 @@
 
 MosaicStorage::MosaicStorage(std::string gameMode) {
 
-    determineGameMode(gameMode);
+
+    int noOfBrokenTiles = 7;
+    determineGameMode(gameMode, noOfBrokenTiles);
+    
     // Creating the grid as a 2d array of pointers
     this->grid = new std::shared_ptr<Tile>*[maxNoRows];
     for (unsigned int row = 0; row < maxNoRows; ++row) {
@@ -11,7 +14,7 @@ MosaicStorage::MosaicStorage(std::string gameMode) {
     }
 
     this->mosaic = new Mosaic(gameMode);
-    this->brokenTiles = new BrokenTiles();
+    this->brokenTiles = new BrokenTiles(noOfBrokenTiles);
     
 }
 
@@ -114,8 +117,23 @@ bool MosaicStorage::isValidGreyAdd(Type type, unsigned const int row){
     return valid;
 }
 
-bool MosaicStorage::isValidSixBySixAdd(Type type, unsigned int){
-    return false;
+bool MosaicStorage::isValidSixBySixAdd(Type type, unsigned int row){
+    bool valid = false;
+    int column = mosaic->getColourColumn(row, type);
+    std::cout<<"COLUMN NAME" <<column<<std::endl;
+    std::cout<<"COLOR TYPE" <<type<<std::endl;
+    Type rowType = getRowType(row);
+    
+    // Row type is the same or empty
+    if(type == rowType || rowType == Type::NONE){
+        // Check that storage row is not full. And mosaic row SLOT is not taken. Change this for grey.
+        // So check the spot they want to move to is free and that the vertical rule checks out.
+        //
+        if (!isRowFull(row) && mosaic->isSpaceFree(row, column)) {
+            valid = true;
+        }
+    }
+    return valid;
 }
 
 //we move the broken tiles to discarded tiles so we can later move them to the box lid
@@ -208,7 +226,9 @@ BrokenTiles* MosaicStorage::getBrokenTiles() {
 }
 
 void MosaicStorage::moveToMosaic(std::shared_ptr<Tile> tile, unsigned const int row, int col) {
-    if(!this->greyMode)
+    if(sixBySixMode){
+        col = mosaic->getColourColumn(row, tile->getType());
+    } else if(!this->greyMode && !this->sixBySixMode)
         col = mosaic->getColourColumn(row, tile->getType());
     mosaic->addTile(tile, row, col);
 }
@@ -239,8 +259,13 @@ std::vector<std::shared_ptr<Tile>>* MosaicStorage::getDiscardedTiles(){
 }
 
 std::string MosaicStorage::rowToString(int index){
+    int noOfRows = 5;
+    
+    if(sixBySixMode){
+        noOfRows = 6;
+    }
     std::string string = std::to_string(index+1) + ": ";
-    for(int j = 0; j<5-(index+1);j++){
+    for(int j = 0; j<noOfRows-(index+1);j++){
             string+= "  ";
     }
     for(int i = index; i>=0; --i){
@@ -270,7 +295,7 @@ std::string MosaicStorage::rowToSave(int index){
     return string;
 }
 
-void MosaicStorage::determineGameMode(std::string gameMode){
+void MosaicStorage::determineGameMode(std::string gameMode, int& noOfBrokenTiles){
     if(gameMode == "grey"){
         this->greyMode = true;
         this->sixBySixMode = false;
@@ -279,6 +304,7 @@ void MosaicStorage::determineGameMode(std::string gameMode){
         this->greyMode = false;
         this->sixBySixMode = true;
         this->maxNoRows = 6;
+        noOfBrokenTiles = 8;
     }else{
         this->greyMode = false;
         this->sixBySixMode = false;
