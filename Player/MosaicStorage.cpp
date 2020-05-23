@@ -1,15 +1,17 @@
 #include "headers/MosaicStorage.h"
 
-MosaicStorage::MosaicStorage() {
+MosaicStorage::MosaicStorage(std::string gameMode) {
 
+    determineGameMode(gameMode);
     // Creating the grid as a 2d array of pointers
-    this->grid = new std::shared_ptr<Tile>*[MAX_ROWS];
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
+    this->grid = new std::shared_ptr<Tile>*[maxNoRows];
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
         this->grid[row] = new std::shared_ptr<Tile>[row+1];
     }
 
-    this->mosaic = new Mosaic();
+    this->mosaic = new Mosaic(gameMode);
     this->brokenTiles = new BrokenTiles();
+    
 }
 
 MosaicStorage::~MosaicStorage() {
@@ -17,7 +19,7 @@ MosaicStorage::~MosaicStorage() {
     brokenTiles = nullptr;
 
 
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
         clearRow(row);
     }
     delete[] grid;
@@ -64,10 +66,46 @@ bool MosaicStorage::isRowFull(unsigned const int row) {
 
 bool MosaicStorage::isValidAdd(Type type, unsigned const int row) {
     bool valid = false;
+    
+    if(this->greyMode){
+        valid = isValidGreyAdd(type, row);
+    }else if( this->sixBySixMode){
+        valid = isValidSixBySixAdd(type, row);
+    }else{
+        valid = isValidStandardAdd(type, row);
+    }
+   
+    return valid;
+}
+
+bool MosaicStorage::isValidStandardAdd(Type type, unsigned const int row){
+    bool valid = false;
     int column = mosaic->getColourColumn(row, type);
     Type rowType = getRowType(row);
     
+    // Row type is the same or empty
     if(type == rowType || rowType == Type::NONE){
+        // Check that storage row is not full. And mosaic row SLOT is not taken. Change this for grey.
+        // So check the spot they want to move to is free and that the vertical rule checks out.
+        //
+        if (!isRowFull(row) && mosaic->isSpaceFree(row, column)) {
+            valid = true;
+        }
+    }
+   
+    return valid;
+}
+
+bool MosaicStorage::isValidGreyAdd(Type type, unsigned const int row){
+    bool valid = false;
+    int column = mosaic->getColourColumn(row, type);
+    Type rowType = getRowType(row);
+    
+    // Row type is the same or empty
+    if(type == rowType || rowType == Type::NONE){
+        // Check that storage row is not full. And mosaic row SLOT is not taken. Change this for grey.
+        // So check the spot they want to move to is free and that the vertical rule checks out.
+        //
         if (!isRowFull(row) && mosaic->isSpaceFree(row, column)) {
             valid = true;
         }
@@ -95,7 +133,7 @@ void MosaicStorage::endOfRoundDiscardBrokenTiles(){
 
 //moves the tiles to their corresponding mosaic spaces in the mosaics while discarding the rest
 void MosaicStorage::endOfRoundMove(){
-    for(int row = 0; row< MAX_ROWS; ++row){
+    for(unsigned int row = 0; row< maxNoRows; ++row){
         if(isRowFull(row)){
             std::shared_ptr<Tile>* tiles = getRow(row);
             for(int i = 0; i < (row + 1); ++i){
@@ -204,4 +242,20 @@ std::string MosaicStorage::rowToSave(int index){
         }     
     }
     return string;
+}
+
+void MosaicStorage::determineGameMode(std::string gameMode){
+    if(gameMode == "grey"){
+        this->greyMode = true;
+        this->sixBySixMode = false;
+        this->maxNoRows = 5;
+    } else if(gameMode == "six"){
+        this->greyMode = false;
+        this->sixBySixMode = true;
+        this->maxNoRows = 6;
+    }else{
+        this->greyMode = false;
+        this->sixBySixMode = false;
+        this->maxNoRows = 5;
+    }
 }

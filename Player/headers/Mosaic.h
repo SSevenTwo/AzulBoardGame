@@ -15,8 +15,9 @@
 
 class Mosaic{
 public:
-    Mosaic();
+    Mosaic(std::string gameMode);
     ~Mosaic();
+    void determineGameMode(std::string gameMode);
 
     //Getters
     std::shared_ptr<Tile>** getGrid();
@@ -54,7 +55,13 @@ private:
     int noOfDarkBlues;
     int noOfLightBlues;
     int noOfBlacks;
+    int noOfOranges;
     int pointsThisRound;
+
+    bool greyMode;
+    bool sixBySixMode;
+    unsigned int maxNoRows;
+    unsigned int maxNoCols;
 
     /* Represents the column in which the color belongs to
      * Col 1 = Red

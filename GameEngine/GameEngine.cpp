@@ -31,6 +31,9 @@ void GameEngine::commonGameEngine(){
     this->noOfPlayers = 0;
     this->noOfCentralFactories = 0;
     this->use2ndFactory = false;
+    this->greyMode = false;
+    this->sixBySixMode = false;
+    this->standardMode = true;
 }
 
 void GameEngine::instantiateFactories(){
@@ -51,9 +54,11 @@ GameEngine::~GameEngine() {
     delete bag;   
     delete boxLid;
 
-    for(int i = 0;  i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); i++){
-        if(factories[i] != nullptr){
-            factories[i] = nullptr;
+    if(factories.size()>0){
+        for(int i = 0;  i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); i++){
+            if(factories[i] != nullptr){
+                factories[i] = nullptr;
+            }
         }
     }
 
@@ -136,7 +141,7 @@ int GameEngine::getSeed() const{
 
 //gameplay
 
-void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories) {
+void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories, std::string gameMode) {
 
     this->noOfPlayers = noOfPlayers;
     this->noOfCentralFactories = noOfFactories;
@@ -144,10 +149,11 @@ void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int n
         this->use2ndFactory = true;
     }
 
+    determineGameMode(gameMode);
     instantiateFactories();
 
     for(int i = 0; i < noOfPlayers; ++i){
-        std::shared_ptr<Player> player = std::make_shared<Player>(playerNames[i], i);
+        std::shared_ptr<Player> player = std::make_shared<Player>(playerNames[i], i, gameMode);
         player->setPoints(0);
         player->getMosaicStorage()->getMosaic()->resetPoints();
         this->players.push_back(player);
@@ -158,6 +164,18 @@ void GameEngine::newGame(const std::string playerNames[], int noOfPlayers, int n
 
     populateBagAndShuffle();
     populateFactories();
+}
+
+void GameEngine::determineGameMode(std::string gameMode){
+    if(gameMode == "grey"){
+        this->greyMode = true;
+        this->sixBySixMode = false;
+        this->standardMode = false;
+    } else if(gameMode == "six"){
+        this->greyMode = false;
+        this->sixBySixMode = true;
+        this->standardMode = false;
+    }
 }
 
 int GameEngine::playerTurn(std::string playerTurnCommand){

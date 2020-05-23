@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-Mosaic::Mosaic(){
+Mosaic::Mosaic(std::string gameMode){
     // Making 5x5 2d array for tiles
-    this->grid = new std::shared_ptr<Tile>*[MAX_ROWS];
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-        grid[row] = new std::shared_ptr<Tile>[MAX_COLS];
+    this->grid = new std::shared_ptr<Tile>*[maxNoRows];
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
+        grid[row] = new std::shared_ptr<Tile>[maxNoCols];
     }
 
     this->noOfBlacks = 0;
@@ -14,14 +14,15 @@ Mosaic::Mosaic(){
     this->noOfDarkBlues = 0;
     this->noOfLightBlues = 0;
     this->noOfReds = 0;
+    this->noOfOranges = 0;
     this->pointsThisRound = 0;
 
 }
 
 Mosaic::~Mosaic(){
     // delete tiles
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-        for (unsigned int col = 0; col < MAX_COLS; ++col) {
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
+        for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 grid[row][col] = nullptr;
             }
@@ -40,8 +41,8 @@ bool Mosaic::findFullRow(){
     bool fullRowFound = false;
     int counter = 0;
 
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-        for (unsigned int col = 0; col < MAX_COLS; ++col) {
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
+        for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 ++counter;
                 if(counter == MAX_NO_TILES){
@@ -59,7 +60,7 @@ bool Mosaic::findFullCol(unsigned int col){
     bool colIsFull = false;
     int counter = 0;
 
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
         if(grid[row][col] != nullptr){
             ++counter;
             if(counter == MAX_NO_TILES){
@@ -122,7 +123,7 @@ bool Mosaic::checkSequentialRows(int row, int col){
     sequential =  true;
 
     // Check all values after the row
-    for (int i = row+1; i < MAX_ROWS; ++i) {
+    for (unsigned int i = row+1; i < maxNoRows; ++i) {
         if (sequential && grid[i][col] != nullptr) {
             hasSequential = true;
             ++numberOfSequentialTiles;
@@ -154,7 +155,7 @@ bool Mosaic::checkSequentialCols(int row, int col){
     sequential = true;
 
     // Check all values after the row
-    for (int i = col+1; i < MAX_COLS; ++i) { 
+    for (unsigned int i = col+1; i < maxNoCols; ++i) { 
         if (sequential && grid[row][i] != nullptr) {
             hasSequential = true;
             ++numberOfSequentialTiles;
@@ -186,7 +187,7 @@ bool Mosaic::isSpaceFree(unsigned int row, unsigned int col){
 
 bool Mosaic::addTile(std::shared_ptr<Tile> tile, unsigned int row, unsigned int col){
     bool added = false;
-    if(col >= 0 && col < MAX_COLS && row >=0 && row < MAX_ROWS){
+    if(col >= 0 && col < maxNoCols && row >=0 && row < maxNoRows){
         if(grid[row][col] == nullptr){
             this->grid[row][col] = tile;
             numberOfSequentialTiles(row,col);
@@ -213,7 +214,7 @@ void Mosaic::incrementColorCounter(Type tileType){
 
 int Mosaic::getColourColumn(unsigned const int row, unsigned const int colour) {
     int toReturn = -1;
-    if (row >= 0 && row < MAX_ROWS && colour >= 0 && colour < MAX_COLS) {
+    if (row >= 0 && row < maxNoRows && colour >= 0 && colour < maxNoCols) {
         toReturn = colourColumns[row][colour];
     } 
     return toReturn;
@@ -222,7 +223,7 @@ int Mosaic::getColourColumn(unsigned const int row, unsigned const int colour) {
 std::string Mosaic::rowToString(int index){
     std::string string = "|| ";
 
-    for(int i = 0; i< MAX_COLS; ++i){
+    for(unsigned int i = 0; i< maxNoCols; ++i){
         if(this->grid[index][i] != nullptr){
             string += grid[index][i]->getColourType();
             string += " ";
@@ -238,7 +239,7 @@ std::string Mosaic::rowToString(int index){
 std::string Mosaic::templateRowToString(int index) {
     std::string string = "";
 
-    for(int i = 0; i< MAX_COLS; ++i){
+    for(unsigned int i = 0; i< maxNoCols; ++i){
         string += colourGrid[index][i];
         string += " ";
        
@@ -249,7 +250,7 @@ std::string Mosaic::templateRowToString(int index) {
 
 std::string Mosaic::rowToSave(int index){
     std::string string;
-    for(int i = 0; i< MAX_COLS; ++i){
+    for(unsigned int i = 0; i< maxNoCols; ++i){
         if(this->grid[index][i] != nullptr){
             string += grid[index][i]->getColourType();
             string += " ";
@@ -274,8 +275,8 @@ int Mosaic::numFullCols() {
     int counter = 0;
     int numCols = 0;
 
-    for (unsigned int col = 0; col < MAX_COLS; ++col) {
-        for (unsigned int row = 0; row < MAX_ROWS; ++row) {
+    for (unsigned int col = 0; col < maxNoCols; ++col) {
+        for (unsigned int row = 0; row < maxNoRows; ++row) {
             if(grid[row][col] != nullptr){
                 ++counter;
                 if(counter == MAX_NO_TILES){
@@ -293,8 +294,8 @@ int Mosaic::numFullRows() {
     int counter = 0;
     int numRows = 0;
 
-    for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-        for (unsigned int col = 0; col < MAX_COLS; ++col) {
+    for (unsigned int row = 0; row < maxNoRows; ++row) {
+        for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 ++counter;
                 if(counter == MAX_NO_TILES){
@@ -306,4 +307,23 @@ int Mosaic::numFullRows() {
     }
 
     return numRows;
+}
+
+void Mosaic::determineGameMode(std::string gameMode){
+    if(gameMode == "grey"){
+        this->greyMode = true;
+        this->sixBySixMode = false;
+        this->maxNoRows = 5;
+        this->maxNoCols = 5;
+    } else if(gameMode == "six"){
+        this->greyMode = false;
+        this->sixBySixMode = true;
+        this->maxNoRows = 6;
+        this->maxNoCols = 6;
+    }else{
+        this->greyMode = false;
+        this->sixBySixMode = false;
+        this->maxNoRows = 5;
+        this->maxNoCols = 5;
+    }
 }

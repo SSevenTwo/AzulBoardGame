@@ -9,6 +9,8 @@
 enum OPTIONS {
     NO_OPTION,
     NEW_GAME,
+    NEW_GREY_GAME,
+    NEW_6X6_GAME,
     LOAD_GAME,
     CREDITS,
     QUIT,

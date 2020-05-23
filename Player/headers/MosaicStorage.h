@@ -9,7 +9,7 @@
 
 class MosaicStorage{
 public:
-    MosaicStorage();
+    MosaicStorage(std::string gameMode);
     ~MosaicStorage();
 
     //Getters
@@ -39,6 +39,10 @@ public:
     std::shared_ptr<Tile>* findFullRow();
     bool isRowFull(unsigned const int row);
     bool isValidAdd(Type type, unsigned const int row);
+    bool isValidStandardAdd(Type type, unsigned const int row);
+    bool isValidGreyAdd(Type type, unsigned const int row);
+    bool isValidSixBySixAdd(Type type, unsigned const int row);
+    void determineGameMode(std::string gameMode);
 
     //Printers
     std::string rowToString(int index);
@@ -49,6 +53,9 @@ private:
     BrokenTiles* brokenTiles;
     std::vector<std::shared_ptr<Tile>> discardedTiles;
     Mosaic* mosaic;
+    bool greyMode;
+    bool sixBySixMode;
+    unsigned int maxNoRows;
 };
 
 #endif // MOSAICSTORAGE_H

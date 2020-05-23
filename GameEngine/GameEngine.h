@@ -35,7 +35,8 @@ public:
     void instantiateFactories();
 
     //Gameplay Conditions
-    void newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories);
+    void newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories, std::string gameMode);
+    void determineGameMode(std::string gameMode);
     void gameplayLoop(bool& eof, bool& continueMenuLoop);
     bool winConditionMet();
     bool endOfRoundConditionMet();
@@ -109,6 +110,11 @@ private:
     GameEngineCallback* gec;
     int seed;
     std::string gameInfo[36];
+    
+    // Game mode
+    bool standardMode;
+    bool greyMode;
+    bool sixBySixMode;
 
     // For testing purposes
     bool testing;
