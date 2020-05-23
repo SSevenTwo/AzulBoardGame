@@ -489,7 +489,10 @@ bool GameEngine::endOfRoundConditionMet(){
 
 void GameEngine::movePlayerTilesToMosaic(){
     if(greyMode){
+
         Input input;
+        gec->playerBoardUpdate(players, noOfPlayers);
+
         for(int i = 0; i<noOfPlayers; ++i){
             std::shared_ptr<MosaicStorage> playerMosaicStorage = this->players[i]->getMosaicStorage();
             for(int row = 0; row<NUM_NORMAL_FACTORIES; ++row){
@@ -605,7 +608,7 @@ void GameEngine::removeOtherFirstPlayerToken(int centralFactory){
 
 void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player, 
     unsigned const int factoryNumber, const Type type){
-        
+
     int maxBrokenTiles = 7;
     std::vector<std::shared_ptr<Tile>> allTiles =  factories[factoryNumber]->getCopiedTilesAndRemove();
     std::shared_ptr<MosaicStorage> mosaicStorage = player->getMosaicStorage();
