@@ -135,7 +135,7 @@ bool Menu::runSelection(unsigned const int selection) {
 
         //std::cout << "Please enter the number of central factories (1-2):" << std::endl;
         //std::string noOfFactoriesAsString = input.getString();
-        int noOfFactories = 2; // maybe change this later
+        int noOfFactories = 1; // maybe change this later
         // if (input.inputIsInt(noOfFactoriesAsString)) {
         //     std::stringstream sstream (noOfFactoriesAsString);
         //     noOfFactories = 0;

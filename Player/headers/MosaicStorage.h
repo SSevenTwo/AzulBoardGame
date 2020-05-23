@@ -25,8 +25,9 @@ public:
 
     //End of round methods
     void endOfRoundDiscardBrokenTiles();
-    void endOfRoundMove();
-    void moveToMosaic(std::shared_ptr<Tile> tile, unsigned const int row);
+    void endOfRoundMove(int col);
+    bool greyModeEndOfRoundMove(int row, int col);
+    void moveToMosaic(std::shared_ptr<Tile> tile, unsigned const int row, int col);
     void moveToDiscardedTiles(std::shared_ptr<Tile>* tiles);
 
     //Broken Tile Methods
@@ -38,6 +39,7 @@ public:
     //Utility
     std::shared_ptr<Tile>* findFullRow();
     bool isRowFull(unsigned const int row);
+
     bool isValidAdd(Type type, unsigned const int row);
     bool isValidStandardAdd(Type type, unsigned const int row);
     bool isValidGreyAdd(Type type, unsigned const int row);

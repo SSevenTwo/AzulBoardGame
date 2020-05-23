@@ -1,4 +1,5 @@
 #include "headers/MosaicStorage.h"
+#include <iostream>
 
 MosaicStorage::MosaicStorage(std::string gameMode) {
 
@@ -98,20 +99,23 @@ bool MosaicStorage::isValidStandardAdd(Type type, unsigned const int row){
 
 bool MosaicStorage::isValidGreyAdd(Type type, unsigned const int row){
     bool valid = false;
-    int column = mosaic->getColourColumn(row, type);
     Type rowType = getRowType(row);
     
     // Row type is the same or empty
     if(type == rowType || rowType == Type::NONE){
         // Check that storage row is not full. And mosaic row SLOT is not taken. Change this for grey.
         // So check the spot they want to move to is free and that the vertical rule checks out.
-        //
-        if (!isRowFull(row) && mosaic->isSpaceFree(row, column)) {
+        
+        if (!isRowFull(row) && !mosaic->isRowFull(row) && !mosaic->colourExistsInRow(type,row)){
             valid = true;
         }
     }
    
     return valid;
+}
+
+bool MosaicStorage::isValidSixBySixAdd(Type type, unsigned int){
+    return false;
 }
 
 //we move the broken tiles to discarded tiles so we can later move them to the box lid
@@ -132,13 +136,13 @@ void MosaicStorage::endOfRoundDiscardBrokenTiles(){
 }
 
 //moves the tiles to their corresponding mosaic spaces in the mosaics while discarding the rest
-void MosaicStorage::endOfRoundMove(){
+void MosaicStorage::endOfRoundMove(int col){
     for(unsigned int row = 0; row< maxNoRows; ++row){
         if(isRowFull(row)){
             std::shared_ptr<Tile>* tiles = getRow(row);
-            for(int i = 0; i < (row + 1); ++i){
+            for(unsigned int i = 0; i < (row + 1); ++i){
                 if(i == 0){
-                    this->moveToMosaic(tiles[i],row);
+                    this->moveToMosaic(tiles[i],row, col);
                     grid[row][i] = nullptr;
                 }
                 else{
@@ -148,6 +152,27 @@ void MosaicStorage::endOfRoundMove(){
             }
         }
     }
+}
+
+bool MosaicStorage::greyModeEndOfRoundMove(int row, int col){
+    bool success = false;
+    std::shared_ptr<Tile>* tiles = getRow(row);
+    if(!mosaic->colourExistsInCol(tiles[0]->getType(),col) && mosaic->isSpaceFree(row, col)){
+        for(int i = 0; i < (row + 1); ++i){
+            if(i == 0){
+                this->moveToMosaic(tiles[i], row, col);
+                grid[row][i] = nullptr;
+            }
+            else{
+                this->discardedTiles.push_back(tiles[i]);
+                grid[row][i] = nullptr;
+            }
+            
+        }  
+        success = true;
+    }
+
+    return success;
 }
 
 void MosaicStorage::addTile(std::shared_ptr<Tile> tile, unsigned const int row) {
@@ -182,9 +207,10 @@ BrokenTiles* MosaicStorage::getBrokenTiles() {
     return brokenTiles;
 }
 
-void MosaicStorage::moveToMosaic(std::shared_ptr<Tile> tile, unsigned const int row) {
-    int column = mosaic->getColourColumn(row, tile->getType());
-    mosaic->addTile(tile, row, column);
+void MosaicStorage::moveToMosaic(std::shared_ptr<Tile> tile, unsigned const int row, int col) {
+    if(!this->greyMode)
+        col = mosaic->getColourColumn(row, tile->getType());
+    mosaic->addTile(tile, row, col);
 }
 
 void MosaicStorage::moveToDiscardedTiles(std::shared_ptr<Tile>* tiles) {

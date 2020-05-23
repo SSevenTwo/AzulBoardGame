@@ -220,7 +220,7 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
         //validate the three command arguments first before proceeding
         if(checkCommand1(commands[1], factoryNo) && checkCommand2(commands[2], tileType) 
             && checkCommand3(commands[3],storageRow) && checkCommand4(commands[4],centralFactoryNo,factoryNo)){
-            
+                
             if(factoryNo == 0 || (use2ndFactory && (factoryNo == 0 || factoryNo == 1))){
                 if(centralFactoryOnlyHasFirstTile(centralFactoryNo)){
                     toReturn = Error_Message::NO_TILES_IN_CENTRAL;
@@ -242,7 +242,6 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
                 } else {
                     if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,centralFactoryNo,(storageRow-1),tileType, true)) {
                         
-                        std::cout << "moveTilesFromFactory done" <<std::endl;
                         toReturn = Error_Message::SUCCESS;
                     } else {
                         toReturn = Error_Message::INVALID_MOVE;
@@ -357,7 +356,6 @@ bool GameEngine::normalFactoriesAreEmpty(){
     int stopIndex = counter + NUM_NORMAL_FACTORIES;
     
     while( counter < stopIndex && breakLoop == false){
-        std::cout<< counter<< std::endl;
         if(factories[counter]->getAllTiles().size() > 0){
             empty = false;
             breakLoop = true;
@@ -485,9 +483,40 @@ bool GameEngine::endOfRoundConditionMet(){
 }
 
 void GameEngine::movePlayerTilesToMosaic(){
-    for(int i = 0; i<noOfPlayers; ++i){
+    if(greyMode){
+        Input input;
+        for(int i = 0; i<noOfPlayers; ++i){
+            std::shared_ptr<MosaicStorage> playerMosaicStorage = this->players[i]->getMosaicStorage();
+            for(int row = 0; row<NUM_NORMAL_FACTORIES; ++row){
+                if(playerMosaicStorage->isRowFull(row)){
+                    bool success = false;
+                    int col = 0;
+                    while(success == false){
+                        gec->promptUser(this->players[i]->getName() + "'s turn to move from Storage to Mosaic.");
+                        gec->promptUser("Where do you want to move row " + std::to_string(row+1) + " tiles to? (Enter the column index)");
+                        std::string colAsString = input.getString();
+                        if (input.inputIsInt(colAsString)) {
+                            std::stringstream sstream (colAsString);
+                            sstream >> col;
+                            if(col >= 1 && col <= 5){
+                                success = playerMosaicStorage->greyModeEndOfRoundMove(row,col-1);
+                            }
+                        }
+                        gec->playerBoardUpdate(this->players, noOfPlayers); 
+                        if(!success){
+                            gec->promptUser("Error: Please enter a number from 1-5\n");
+                        }
+                    }
+                }
+            }
+        
+        }
+    }
+    else{
+        for(int i = 0; i<noOfPlayers; ++i){
         std::shared_ptr<MosaicStorage> playerMosaicStorage = this->players[i]->getMosaicStorage();
-        playerMosaicStorage->endOfRoundMove();
+        playerMosaicStorage->endOfRoundMove(i);
+        }
     }
 
     // std::shared_ptr<MosaicStorage> playerOneMosaicStorage = playerOne->getMosaicStorage();
@@ -511,7 +540,6 @@ bool GameEngine::moveTilesFromFactory(std::shared_ptr<Player> player,unsigned co
     bool turnSuccess = true;
 
     if (toBroken)
-
         //need to take into consideration wanting to move tiles to broken tiles manually
         moveTilesToBrokenTiles(player, factoryNumber, type);
         
@@ -554,7 +582,7 @@ void GameEngine::removeOtherFirstPlayerToken(int centralFactory){
     else
         factory = factories[0];
 
-    std::vector<std::shared_ptr<Tile>> allTiles =  factory->getCopiedTilesAndRemove();
+    std::vector<std::shared_ptr<Tile>> allTiles = factory->getCopiedTilesAndRemove();
     int size = allTiles.size();
     for(int i = 0; i < size; i++){
         std::shared_ptr<Tile> tileToAdd = allTiles[i];

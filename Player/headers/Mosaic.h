@@ -38,6 +38,10 @@ public:
     bool findFullRow();
     bool findFullCol(unsigned int col);
     bool isSpaceFree(unsigned int row, unsigned int col);
+    bool isRowFull(unsigned int row);
+    bool colourExistsInCol(Type type, unsigned int col);
+    bool colourExistsInRow(Type type, unsigned int row);
+
     int numFullRows();
     int numFullCols();
     int noOfFiveColours();

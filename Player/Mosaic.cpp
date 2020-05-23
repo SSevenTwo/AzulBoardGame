@@ -3,6 +3,8 @@
 #include <iostream>
 
 Mosaic::Mosaic(std::string gameMode){
+    determineGameMode(gameMode);
+
     // Making 5x5 2d array for tiles
     this->grid = new std::shared_ptr<Tile>*[maxNoRows];
     for (unsigned int row = 0; row < maxNoRows; ++row) {
@@ -54,6 +56,20 @@ bool Mosaic::findFullRow(){
     }
 
     return fullRowFound;
+}
+
+bool Mosaic::isRowFull(unsigned const int row) {
+    unsigned int i = 0;
+    bool isFull = false;
+    for (unsigned int counter = 0; counter < maxNoRows; ++counter) {
+        if (grid[row][i] != nullptr) {
+            ++i;
+        }
+    }
+    if (i==maxNoRows) {
+        isFull = true;
+    }
+    return isFull;
 }
 
 bool Mosaic::findFullCol(unsigned int col){
@@ -326,4 +342,32 @@ void Mosaic::determineGameMode(std::string gameMode){
         this->maxNoRows = 5;
         this->maxNoCols = 5;
     }
+
+    
+}
+
+bool Mosaic::colourExistsInCol(Type type, unsigned int col){
+    bool exists = false;
+    for(unsigned int row = 0; row < maxNoRows; ++row){
+        if(this->grid[row][col] != nullptr){
+            if(this->grid[row][col]->getType() == type){
+                exists = true;
+            }
+        }
+    }
+
+    return exists;
+}
+
+bool Mosaic::colourExistsInRow(Type type, unsigned int row){
+    bool exists = false;
+    for(unsigned int col = 0; col < maxNoCols; ++col){
+        if(this->grid[row][col]!= nullptr){
+            if(this->grid[row][col]->getType() == type){
+                exists = true;
+            }
+        }
+    }
+
+    return exists;
 }
