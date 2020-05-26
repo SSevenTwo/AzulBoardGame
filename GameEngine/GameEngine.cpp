@@ -72,6 +72,13 @@ GameEngine::~GameEngine() {
 }
 
 //setters
+void GameEngine::setPlayer(std::string name, int playerNo, std::string gameMode){
+    std::shared_ptr<Player> player = std::make_shared<Player>(name, playerNo, gameMode);
+    player->setPoints(0);
+    player->getMosaicStorage()->getMosaic()->resetPoints();
+    this->players.push_back(player);
+}
+
 void GameEngine::setPlayerOne(std::string player){
     //this->playerOne = new Player(player);
 }
@@ -100,6 +107,10 @@ void GameEngine::swapCurrentTurn(){
 
 
 //getters
+std::shared_ptr<Player> GameEngine::getPlayer(int index){
+    return this->players[index];
+}
+
 Player* GameEngine::getPlayerOne() const{
     //return playerOne;
     return nullptr;
@@ -147,6 +158,27 @@ int GameEngine::getSeed() const{
 
 
 //gameplay
+
+void GameEngine::loadGameSettings(int noOfPlayers, 
+    int noOfCentralFactories, std::string gameMode){
+
+    this->noOfPlayers = noOfPlayers;
+
+    if(noOfPlayers == 2)
+        this->noOfNormalFactories = 5;
+    if(noOfPlayers == 3)
+        this->noOfNormalFactories = 7;
+    if(noOfPlayers == 4)
+        this->noOfNormalFactories = 9;
+
+    this->noOfCentralFactories = noOfCentralFactories;
+    if(noOfCentralFactories == 2){
+        this->use2ndFactory = true;
+    }
+
+    determineGameMode(gameMode);
+    instantiateFactories();
+}
 
 void GameEngine::newGame(const std::string playerNames[], 
     int noOfPlayers, int noOfCentralFactories, std::string gameMode) {
@@ -419,6 +451,7 @@ bool GameEngine::winConditionMet(){
     bool winConditionMet = false;
 
     for(int i = 0; i<noOfPlayers; ++i){
+            std::cout << noOfPlayers << " plaer" << i << std::endl;
         if(this->players[i]->getMosaicStorage()->getMosaic()->findFullRow()){
             winConditionMet = true;
         }
@@ -801,11 +834,16 @@ std::string GameEngine::interpretPlayerTurn(const int result){
 //loop enables the game to keep playing until someone wins or someone quits
 void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
     Input input;
+            std::cout << "gg4" << std::endl;
     while(!endOfCommands && !std::cin.eof() && !winConditionMet()){
+            std::cout << "gg1" << std::endl;
+        
         while(!endOfCommands && !endOfRoundConditionMet()){
 
             //output relevant information to players
+            std::cout << "gg" << std::endl;
             gec->boardComponentUpdate(factories, use2ndFactory);
+            std::cout << "gg 2" << std::endl;
             // gec->playerBoardUpdate(playerOne);
             // gec->playerBoardUpdate(playerTwo);
             //for(int i = 0; i<noOfPlayers; ++i){

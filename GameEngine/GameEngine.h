@@ -36,6 +36,7 @@ public:
 
     //Gameplay Conditions
     void newGame(const std::string playerNames[], int noOfPlayers, int noOfCentralFactories, std::string gameMode);
+    void loadGameSettings(int noOfPlayers, int noOfCentralFactories, std::string gameMode);
     void determineGameMode(std::string gameMode);
     void gameplayLoop(bool& eof, bool& continueMenuLoop);
     bool winConditionMet();
@@ -80,6 +81,7 @@ public:
     void removeOtherFirstPlayerToken(int centralFactoryNo);
     
     //Getters
+    std::shared_ptr<Player> getPlayer(int index);
     int getCurrentTurn() const;
     int getPlayerStartingNextRound() const;
     std::shared_ptr<Player> getCurrentPlayer() const;
@@ -91,6 +93,7 @@ public:
     int getSeed() const;
 
     //Setters
+    void setPlayer(std::string name, int playerNo, std::string gameMode);
     void setPlayerOne(std::string player);
     void setPlayerTwo(std::string player);
     void setSeed(int seed);

@@ -21,23 +21,58 @@ void GameEngineIO::loadGame(std::string fileName) {
 
     unsigned int i = 0;
 
-    while (ifs.good() || i < 36) {
-        gameInfo[i] = currentInfo;
-        ++i;
+    while (ifs.good()) {
+        gameInfo.push_back(currentInfo);
         std::getline(ifs, currentInfo);
+        ++i;
     }
 
     ifs.close();
 
+    //debug print
+    // for(unsigned int i = 0; i<gameInfo.size(); ++i){
+    //     std::cout<< gameInfo[i] <<std::endl;
+    // }
+    
+    
+    //Determine game mode
+    if(gameInfo[0] == "grey"){
+        this->greyMode = true;
+        this->noOfTilesPerFactory = 4;
+        this->noOfStorageRows = 5;
+    }else if(gameInfo[0] == "six"){
+        this->sixBySixMode = true;
+        this->noOfTilesPerFactory = 5;
+        this->noOfStorageRows = 6;
+    }if(gameInfo[0] == "standard"){
+        this->standard = true;
+        this->noOfTilesPerFactory = 4;
+        this->noOfStorageRows = 5;
+    }
 
+    std::stringstream noOfPlayers(gameInfo[1]);
+    noOfPlayers >> this->noOfPlayers;
+
+    if(this->noOfPlayers == 2){
+        this->noOfFactories = 5;
+    }
+    else if(this->noOfPlayers == 3){
+        this->noOfFactories = 7;
+    }else if(this->noOfPlayers == 4){
+        this->noOfFactories = 9;
+    }
+
+    std::stringstream noOfCentralFactories(gameInfo[2]);
+    noOfCentralFactories >> this->noOfCentralFactories;
+    
     //load the individual components from the file
+    gameEngine->loadGameSettings(this->noOfPlayers,this->noOfCentralFactories,gameInfo[0]);
     loadPlayers();
     loadFactories();
 
-    Player* players[] = {gameEngine->getPlayerOne(), gameEngine->getPlayerTwo()};
-    loadMosaics(players);
-    loadStorageArea(players);
-    loadBrokenTiles(players);
+    loadMosaics();
+    loadStorageArea();
+    loadBrokenTiles();
 
     loadBag();
     loadLid();
@@ -55,37 +90,35 @@ void GameEngineIO::loadPlayers(){
         throw "Both players cannot have the same name.";
     }
 
-    // Load Player 1 Name into game
-    gameEngine->setPlayerOne(gameInfo[0]);
+    this->index = 3;
+    for(unsigned int i = 0; i < noOfPlayers; ++i){
+        this->gameEngine->setPlayer(gameInfo[index],i+1,gameInfo[0]);
+        ++index;
+    }
 
-    // Load Player 2 Name into game
-    gameEngine->setPlayerTwo(gameInfo[1]);
-
-    // Load Player 1 Points into game
-    std::stringstream player1Points(gameInfo[2]);
-    int points1;
-    player1Points >> points1;
-    gameEngine->getPlayerOne()->setPoints(points1);
-
-    // Load Player 2 Points into game
-    std::stringstream player2Points(gameInfo[3]);
-    int points2;
-    player2Points >> points2;
-    gameEngine->getPlayerTwo()->setPoints(points2);
+    // setting points
+    for(unsigned int i = 0; i < noOfPlayers; ++i){
+        std::stringstream playerPoints(gameInfo[index]);
+        int points;
+        playerPoints >> points;
+        std::shared_ptr<Player> player = this->gameEngine->getPlayer(i);
+        player->setPoints(points);
+        ++index;
+    }
 
     // Load Next Turn info into game
-    std::stringstream currentTurnAsString(gameInfo[4]);
+    std::stringstream currentTurnAsString(gameInfo[index]);
     int currentTurn;
     currentTurnAsString >> currentTurn;
     gameEngine->setCurrentTurn(currentTurn);
+    ++index;
 
+    std::cout << "players loaded" << std::endl;
 }
 
 void GameEngineIO::loadFactories(){
-    for (int i = 0; i < NUM_FACTORIES; ++i) {
-        unsigned int factoryIndex = i + MAX_ROWS;
-
-        std::stringstream factoryStream(gameInfo[factoryIndex]);
+    for (unsigned int i = 0; i < (this->noOfFactories + this->noOfCentralFactories); ++i) {
+        std::stringstream factoryStream(gameInfo[index]);
         unsigned int counter = 0;
         char toAdd;
         factoryStream >> toAdd;
@@ -105,28 +138,28 @@ void GameEngineIO::loadFactories(){
             factoryStream >> toAdd;
             ++counter;
         }
+        ++index;
     }
+    std::cout << "Finished loading factories" << std::endl;
 }
 
-void GameEngineIO::loadMosaics(Player* players[]){
+void GameEngineIO::loadMosaics(){
     // Load Player 1 and 2 Mosaics into game 
-    for (unsigned int playerNum = 0; playerNum < NUM_PLAYERS; ++playerNum) {
+    for (unsigned int playerNum = 0; playerNum < this->noOfPlayers; ++playerNum) {
 
-        unsigned int indexIncrement = 11 + playerNum*5;
+        for (unsigned int row = 0; row < noOfStorageRows; ++row) {
 
-        for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-            unsigned int mosaicRowIndex = row+indexIncrement;
-
-            std::stringstream playerMosaicStream(gameInfo[mosaicRowIndex]); // 11 to 15 and then 16 to 20
+            std::stringstream playerMosaicStream(gameInfo[index]);
             char toAdd;
             playerMosaicStream >> toAdd;
 
-            for (unsigned int col = 0; col < MAX_COLS; ++col) {
+            for (unsigned int col = 0; col < noOfTilesPerFactory; ++col) {
                 if (playerMosaicStream.good()) {
                     Type tileType = Type::NONE;
                     if (gameEngine->changeType(tileType, toAdd)) {
                         std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileType);
-                        if (!players[playerNum]->getMosaicStorage()->getMosaic()->addTile(tile, row, col)) {
+                        std::shared_ptr<Player> player = gameEngine->getPlayer(playerNum);
+                        if (!player->getMosaicStorage()->getMosaic()->addTile(tile, row, col)) {
                             readError = true;
                             tile = nullptr;
                         }
@@ -134,23 +167,26 @@ void GameEngineIO::loadMosaics(Player* players[]){
                     playerMosaicStream >> toAdd;
                 }
             }
+            ++index;
         }
     }
-    gameEngine->getPlayerOne()->getMosaicStorage()->getMosaic()->resetPoints();
-    gameEngine->getPlayerTwo()->getMosaicStorage()->getMosaic()->resetPoints();
+    for(unsigned int i = 0; i <noOfPlayers; ++i){
+        std::shared_ptr<Player> player = gameEngine->getPlayer(i);
+        player->getMosaicStorage()->getMosaic()->resetPoints();
+    }
+
+    std::cout << "Mosaics loaded" << std::endl;
+    
 }
 
-void GameEngineIO::loadStorageArea(Player* players[]){
+void GameEngineIO::loadStorageArea(){
      // Load Player 1 and 2 MosaicStorages into game. 
 
-    for (unsigned int playerNum = 0; playerNum < NUM_PLAYERS; ++playerNum) {
+    for (unsigned int playerNum = 0; playerNum < this->noOfPlayers; ++playerNum) {
 
-        unsigned int indexIncrement = 21 + playerNum*5; 
+        for (unsigned int row = 0; row < this->noOfStorageRows; ++row) {
 
-        for (unsigned int row = 0; row < MAX_ROWS; ++row) {
-
-            unsigned int mosaicRowIndex = row+indexIncrement;
-            std::stringstream mosaicStorageStream(gameInfo[mosaicRowIndex]); // 21 to 25 and then 26 to 30
+            std::stringstream mosaicStorageStream(gameInfo[index]);
 
             char toAdd;
             mosaicStorageStream >> toAdd;
@@ -159,9 +195,10 @@ void GameEngineIO::loadStorageArea(Player* players[]){
                 Type tileType = Type::NONE;
                 if (gameEngine->changeType(tileType, toAdd)) {
                     std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileType);
+                    std::shared_ptr<Player> player = gameEngine->getPlayer(playerNum);
 
-                    if (players[playerNum]->getMosaicStorage()->isValidAdd(tileType, row)) {
-                        players[playerNum]->getMosaicStorage()->addTile(tile, row);
+                    if (player->getMosaicStorage()->isValidAdd(tileType, row)) {
+                        player->getMosaicStorage()->addTile(tile, row);
                     } else {
                         readError = true;
                         tile = nullptr;
@@ -169,17 +206,18 @@ void GameEngineIO::loadStorageArea(Player* players[]){
                 }
                 mosaicStorageStream >> toAdd;
             }
+            ++index;
         }
     }
+    std::cout<<"Loaded storage" <<std::endl;
 }
 
-void GameEngineIO::loadBrokenTiles(Player* players[]){
+void GameEngineIO::loadBrokenTiles(){
     // Load Player 1 and 2 Broken Tiles into game
 
-    for (unsigned int playerNum = 0; playerNum < NUM_PLAYERS; ++playerNum) {
+    for (unsigned int playerNum = 0; playerNum < this->noOfPlayers; ++playerNum) {
 
-        unsigned int brokenTilesIndex = playerNum+31;
-        std::stringstream brokenTileStream(gameInfo[brokenTilesIndex]); // 31 and 32
+        std::stringstream brokenTileStream(gameInfo[index]); // 31 and 32
         char toAdd;
         brokenTileStream >> toAdd;
 
@@ -190,19 +228,23 @@ void GameEngineIO::loadBrokenTiles(Player* players[]){
             }
             else if (gameEngine->changeType(tileType, toAdd)) {
                 std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileType);
-                players[playerNum]->getMosaicStorage()->getBrokenTiles()->addTile(tile);
+                std::shared_ptr<Player> player = gameEngine->getPlayer(playerNum);
+                player->getMosaicStorage()->getBrokenTiles()->addTile(tile);
             } else {
                 readError = true;
             }
             brokenTileStream >> toAdd;
         }
+        ++index;
     }
+
+    std::cout<<"Loaded broken tiles" <<std::endl;
 }
 
 void GameEngineIO::loadLid(){
     
     // Load Box Lid Tiles into  game
-    std::stringstream boxLidStream(gameInfo[33]);
+    std::stringstream boxLidStream(gameInfo[index]);
     // Going to need to traverse the vector backwards since our box lid only has an add to front method
     std::vector<char> tilesToAdd;
     char toAdd;
@@ -225,11 +267,12 @@ void GameEngineIO::loadLid(){
         }
     }
     tilesToAdd.clear();
+    ++index;
 }
 
 void GameEngineIO::loadBag(){
     // Load Bag Tiles into game
-    std::stringstream tileBagStream(gameInfo[34]);
+    std::stringstream tileBagStream(gameInfo[index]);
     char toAdd;
     std::vector<char> tilesToAdd;
     // Going to need to traverse the vector backwards since our tile bag only has an add to front method
@@ -251,13 +294,15 @@ void GameEngineIO::loadBag(){
         }
     }
     tilesToAdd.clear();
+    ++index;
 }
 
 void GameEngineIO::loadSeed(){
     int seed;
-    std::stringstream seedStream(gameInfo[35]);
+    std::stringstream seedStream(gameInfo[index]);
     seedStream >> seed;
     gameEngine->setSeed(seed);
+    std::cout<< "Finished loading" <<std::endl;
 }
 
 void GameEngineIO::saveGame(std::string fileName) {

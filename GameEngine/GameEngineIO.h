@@ -18,9 +18,9 @@ public:
 
     void loadPlayers();
     void loadFactories();
-    void loadMosaics(Player* players[]);
-    void loadStorageArea(Player* players[]);
-    void loadBrokenTiles(Player* players[]);
+    void loadMosaics();
+    void loadStorageArea();
+    void loadBrokenTiles();
     void loadBag();
     void loadLid();
     void loadSeed();
@@ -28,12 +28,15 @@ public:
 private:
     GameEngine* gameEngine;
     std::vector<std::string> gameInfo;
+    int index;
     bool greyMode;
     bool sixBySixMode;
     bool standard;
     unsigned int noOfPlayers;
     unsigned int noOfFactories;
+    unsigned int noOfStorageRows;
     unsigned int noOfCentralFactories;
+    unsigned int noOfTilesPerFactory;
     bool readError;  
 };
 
