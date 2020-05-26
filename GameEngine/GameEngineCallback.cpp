@@ -37,8 +37,12 @@ void GameEngineCallback::playerBoardUpdate(std::vector<std::shared_ptr<Player>> 
         + mStorage->rowToString(1) + mosaic->rowToString(1) + "\n"
         + mStorage->rowToString(2) + mosaic->rowToString(2) + "\n"
         + mStorage->rowToString(3) + mosaic->rowToString(3) + "\n"
-        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\n"
-        + players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\n";
+        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\n";
+        if(sixBySix){
+        outputString +=mStorage->rowToString(5) + mosaic->rowToString(5) + "\n";
+        outputString += players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
+        }
+    else  outputString += players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
     }
 
     else if( noOfPlayers == 4){
@@ -51,8 +55,13 @@ void GameEngineCallback::playerBoardUpdate(std::vector<std::shared_ptr<Player>> 
         + mStorage->rowToString(1) + mosaic->rowToString(1) + "\t" + mStorage1->rowToString(1) + mosaic1->rowToString(1) + "\n"
         + mStorage->rowToString(2) + mosaic->rowToString(2) + "\t" + mStorage1->rowToString(2) + mosaic1->rowToString(2) + "\n"
         + mStorage->rowToString(3) + mosaic->rowToString(3) + "\t" + mStorage1->rowToString(3) + mosaic1->rowToString(3) + "\n"
-        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\t" + mStorage1->rowToString(4) + mosaic1->rowToString(4) + "\n"
-        + players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\t\t" + players[3]->getMosaicStorage()->getBrokenTiles()->toString() + "\n";
+        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\t" + mStorage1->rowToString(4) + mosaic1->rowToString(4) + "\n";
+
+        if(sixBySix){
+        outputString +=mStorage->rowToString(5) + mosaic->rowToString(5) + "\t" + mStorage1->rowToString(5) + mosaic1->rowToString(5) + "\n";
+        outputString += players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\t" + players[3]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
+        }
+        else  outputString += players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\t\t" + players[3]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
     }
     std::cout << outputString << std::endl;
     // mosaic->templateRowToString(0)

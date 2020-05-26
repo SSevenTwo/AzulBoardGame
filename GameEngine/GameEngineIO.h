@@ -27,7 +27,13 @@ public:
     
 private:
     GameEngine* gameEngine;
-    std::string gameInfo[36];
+    std::vector<std::string> gameInfo;
+    bool greyMode;
+    bool sixBySixMode;
+    bool standard;
+    unsigned int noOfPlayers;
+    unsigned int noOfFactories;
+    unsigned int noOfCentralFactories;
     bool readError;  
 };
 

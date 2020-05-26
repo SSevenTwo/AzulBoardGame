@@ -35,7 +35,7 @@ public:
     void instantiateFactories();
 
     //Gameplay Conditions
-    void newGame(const std::string playerNames[], int noOfPlayers, int noOfFactories, std::string gameMode);
+    void newGame(const std::string playerNames[], int noOfPlayers, int noOfCentralFactories, std::string gameMode);
     void determineGameMode(std::string gameMode);
     void gameplayLoop(bool& eof, bool& continueMenuLoop);
     bool winConditionMet();
@@ -101,6 +101,7 @@ private:
     std::vector<std::shared_ptr<Player>> players;
     int noOfPlayers;
     int noOfCentralFactories;
+    int noOfNormalFactories;
     bool use2ndFactory;
     std::vector<std::shared_ptr<Factory>> factories;
     LinkedList* bag;

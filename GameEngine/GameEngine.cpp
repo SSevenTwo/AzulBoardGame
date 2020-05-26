@@ -30,6 +30,7 @@ void GameEngine::commonGameEngine(){
     this->playerStartingNextRound = 0;
     this->noOfPlayers = 0;
     this->noOfCentralFactories = 0;
+    this->noOfNormalFactories = 0;
     this->use2ndFactory = false;
     this->greyMode = false;
     this->sixBySixMode = false;
@@ -48,7 +49,7 @@ void GameEngine::instantiateFactories(){
         this->factories.push_back(factory);
     }
 
-    for(int i = 0; i < 5; ++i){
+    for(int i = 0; i < noOfNormalFactories; ++i){
         std::shared_ptr<Factory> factory = std::make_shared<Factory>();
         this->factories.push_back(factory);
     }
@@ -61,7 +62,7 @@ GameEngine::~GameEngine() {
     delete boxLid;
 
     if(factories.size()>0){
-        for(int i = 0;  i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); i++){
+        for(int i = 0;  i < (noOfCentralFactories + noOfNormalFactories); i++){
             if(factories[i] != nullptr){
                 factories[i] = nullptr;
             }
@@ -148,11 +149,18 @@ int GameEngine::getSeed() const{
 //gameplay
 
 void GameEngine::newGame(const std::string playerNames[], 
-    int noOfPlayers, int noOfFactories, std::string gameMode) {
+    int noOfPlayers, int noOfCentralFactories, std::string gameMode) {
 
     this->noOfPlayers = noOfPlayers;
-    this->noOfCentralFactories = noOfFactories;
-    if(noOfFactories == 2){
+    if(noOfPlayers == 2)
+        this->noOfNormalFactories = 5;
+    if(noOfPlayers == 3)
+        this->noOfNormalFactories = 7;
+    if(noOfPlayers == 4)
+        this->noOfNormalFactories = 9;
+
+    this->noOfCentralFactories = noOfCentralFactories;
+    if(noOfCentralFactories == 2){
         this->use2ndFactory = true;
     }
 
@@ -279,9 +287,9 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
 //check if input is int and valid
 bool GameEngine::checkCommand1(const std::string input, int& factoryNo){
     bool success = inputIsInt(input);
-    int maxFactoryNo = 5;
+    int maxFactoryNo = noOfNormalFactories;
     if(use2ndFactory){
-        maxFactoryNo = 6;
+        maxFactoryNo = noOfNormalFactories + 1;
     }
 
     if(success){
@@ -370,7 +378,7 @@ bool GameEngine::normalFactoriesAreEmpty(){
     if(use2ndFactory)
         counter = 2;
 
-    int stopIndex = counter + NUM_NORMAL_FACTORIES;
+    int stopIndex = counter + noOfNormalFactories;
     
     while( counter < stopIndex && breakLoop == false){
         if(factories[counter]->getAllTiles().size() > 0){
@@ -496,11 +504,11 @@ void GameEngine::calculatePointsPerRound() {
 bool GameEngine::endOfRoundConditionMet(){
     bool endOfRound = false;
     int counter = 0;
-    for(int i = 0; i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); ++i){
+    for(int i = 0; i < (noOfCentralFactories + noOfNormalFactories); ++i){
         if(factories[i]->getAllTiles().size() == 0)
             ++counter;
     }
-    if(counter == (noOfCentralFactories + NUM_NORMAL_FACTORIES))
+    if(counter == (noOfCentralFactories + noOfNormalFactories))
         endOfRound = true;
 
     return endOfRound;
@@ -510,11 +518,13 @@ void GameEngine::movePlayerTilesToMosaic(){
     if(greyMode){
 
         Input input;
+        int maxNoStorageRows = 5;
         gec->playerBoardUpdate(players, noOfPlayers, sixBySixMode);
 
         for(int i = 0; i<noOfPlayers; ++i){
+
             std::shared_ptr<MosaicStorage> playerMosaicStorage = this->players[i]->getMosaicStorage();
-            for(int row = 0; row<NUM_NORMAL_FACTORIES; ++row){
+            for(int row = 0; row<maxNoStorageRows; ++row){
                 if(playerMosaicStorage->isRowFull(row)){
                     bool success = false;
                     int col = 0;
@@ -531,6 +541,7 @@ void GameEngine::movePlayerTilesToMosaic(){
                                 success = playerMosaicStorage->greyModeEndOfRoundMove(row,col-1);
                             }
                         }
+
                         gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode);
                         if(!success){
                             std::string output = "Error: Please enter a number from 1-5.\n";
@@ -684,7 +695,7 @@ void GameEngine::populateFactories(){
         noOfTilesInFactory = 5;
 
     //start at 1 so we don't populate the central factory
-    for(int i = startIndex; i < (startIndex+5); i++){
+    for(int i = startIndex; i < (startIndex+noOfNormalFactories); i++){
         //fill each factory with noOfTilesInFactory tiles
         for(int j = 0; j < noOfTilesInFactory; ++j){
             if (bag->getSize() > 0) {
@@ -871,7 +882,7 @@ void GameEngine::calculateEndGamePoints() {
 void GameEngine::resetGame(){
     
     //don't delete components as they get instantiated with GE
-    for(int i = 0; i < (noOfCentralFactories + NUM_NORMAL_FACTORIES); i++){
+    for(int i = 0; i < (noOfCentralFactories + noOfNormalFactories); i++){
         factories[i]->clear();
     }
     players.clear();

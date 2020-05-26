@@ -105,19 +105,19 @@ bool Menu::runSelection(unsigned const int selection) {
 
     } else if(selection == OPTIONS::NEW_GREY_GAME){
 
-        //std::cout << "Please enter the number of players:" << std::endl;
-        //std::string noOfPlayerAsString = input.getString();
+        std::cout << "Please enter the number of players:" << std::endl;
+        std::string noOfPlayerAsString = input.getString();
         int noOfPlayer = 2; // maybe change this later
-        // if (input.inputIsInt(noOfPlayerAsString)) {
-        //     std::stringstream sstream (noOfPlayerAsString);
-        //     noOfPlayer = 0;
-        //     sstream >> noOfPlayer;
-        //     if(noOfPlayer <= 0 || noOfPlayer >4){
-        //         throw "Please enter a number from 1-4.";
-        //     }
-        // } else {
-        //     throw "Please enter a number from 1-4.";
-        // }
+        if (input.inputIsInt(noOfPlayerAsString)) {
+            std::stringstream sstream (noOfPlayerAsString);
+            noOfPlayer = 0;
+            sstream >> noOfPlayer;
+            if(noOfPlayer <= 0 || noOfPlayer >4){
+                throw "Please enter a number from 1-4.";
+            }
+        } else {
+            throw "Please enter a number from 1-4.";
+        }
 
         std::string playerNames[4] = {};
 
@@ -135,19 +135,19 @@ bool Menu::runSelection(unsigned const int selection) {
             }
         }
 
-        //std::cout << "Please enter the number of central factories (1-2):" << std::endl;
-        //std::string noOfFactoriesAsString = input.getString();
+        std::cout << "Please enter the number of central factories (1-2):" << std::endl;
+        std::string noOfFactoriesAsString = input.getString();
         int noOfFactories = 1; // maybe change this later
-        // if (input.inputIsInt(noOfFactoriesAsString)) {
-        //     std::stringstream sstream (noOfFactoriesAsString);
-        //     noOfFactories = 0;
-        //     sstream >> noOfFactories;
-        //     if(noOfFactories <= 0 || noOfFactories >2){
-        //         throw "Please enter a number from 1-2.";
-        //     }
-        // } else {
-        //     throw "Please enter a number from 1-2.";
-        // }
+        if (input.inputIsInt(noOfFactoriesAsString)) {
+            std::stringstream sstream (noOfFactoriesAsString);
+            noOfFactories = 0;
+            sstream >> noOfFactories;
+            if(noOfFactories <= 0 || noOfFactories >2){
+                throw "Please enter a number from 1-2.";
+            }
+        } else {
+            throw "Please enter a number from 1-2.";
+        }
 
         for(int i = 0; i < noOfPlayer; ++i){
             std::cout << "Welcome " << playerNames[i] << "!" << std::endl;
@@ -159,19 +159,19 @@ bool Menu::runSelection(unsigned const int selection) {
 
     } else if(selection == OPTIONS::NEW_6X6_GAME){
 
-        //std::cout << "Please enter the number of players:" << std::endl;
-        //std::string noOfPlayerAsString = input.getString();
+        std::cout << "Please enter the number of players:" << std::endl;
+        std::string noOfPlayerAsString = input.getString();
         int noOfPlayer = 2; // maybe change this later
-        // if (input.inputIsInt(noOfPlayerAsString)) {
-        //     std::stringstream sstream (noOfPlayerAsString);
-        //     noOfPlayer = 0;
-        //     sstream >> noOfPlayer;
-        //     if(noOfPlayer <= 0 || noOfPlayer >4){
-        //         throw "Please enter a number from 1-4.";
-        //     }
-        // } else {
-        //     throw "Please enter a number from 1-4.";
-        // }
+        if (input.inputIsInt(noOfPlayerAsString)) {
+            std::stringstream sstream (noOfPlayerAsString);
+            noOfPlayer = 0;
+            sstream >> noOfPlayer;
+            if(noOfPlayer <= 0 || noOfPlayer >4){
+                throw "Please enter a number from 1-4.";
+            }
+        } else {
+            throw "Please enter a number from 1-4.";
+        }
 
         std::string playerNames[4] = {};
 
@@ -189,19 +189,19 @@ bool Menu::runSelection(unsigned const int selection) {
             }
         }
 
-        //std::cout << "Please enter the number of central factories (1-2):" << std::endl;
-        //std::string noOfFactoriesAsString = input.getString();
+        std::cout << "Please enter the number of central factories (1-2):" << std::endl;
+        std::string noOfFactoriesAsString = input.getString();
         int noOfFactories = 1; // maybe change this later
-        // if (input.inputIsInt(noOfFactoriesAsString)) {
-        //     std::stringstream sstream (noOfFactoriesAsString);
-        //     noOfFactories = 0;
-        //     sstream >> noOfFactories;
-        //     if(noOfFactories <= 0 || noOfFactories >2){
-        //         throw "Please enter a number from 1-2.";
-        //     }
-        // } else {
-        //     throw "Please enter a number from 1-2.";
-        // }
+        if (input.inputIsInt(noOfFactoriesAsString)) {
+            std::stringstream sstream (noOfFactoriesAsString);
+            noOfFactories = 0;
+            sstream >> noOfFactories;
+            if(noOfFactories <= 0 || noOfFactories >2){
+                throw "Please enter a number from 1-2.";
+            }
+        } else {
+            throw "Please enter a number from 1-2.";
+        }
 
         for(int i = 0; i < noOfPlayer; ++i){
             std::cout << "Welcome " << playerNames[i] << "!" << std::endl;
