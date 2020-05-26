@@ -14,7 +14,7 @@ public:
     ~GameEngineIO();
 
     void loadGame(std::string fileName);
-    void saveGame(std::string fileName);
+    void saveGame(std::string fileName, std::string gameMode, int noOfPlayers);
 
     void loadPlayers();
     void loadFactories();
@@ -24,6 +24,7 @@ public:
     void loadBag();
     void loadLid();
     void loadSeed();
+    void determineGameMode(std::string gameMode);
     
 private:
     GameEngine* gameEngine;

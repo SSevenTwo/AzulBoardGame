@@ -107,6 +107,10 @@ void GameEngine::swapCurrentTurn(){
 
 
 //getters
+std::vector<std::shared_ptr<Player>> GameEngine::getPlayers(){
+    return this->players;
+}
+
 std::shared_ptr<Player> GameEngine::getPlayer(int index){
     return this->players[index];
 }
@@ -151,6 +155,14 @@ std::shared_ptr<Player> GameEngine::getCurrentPlayer() const{
 int GameEngine::getCurrentTurn() const{
     return this->currentTurn;
 }
+
+int GameEngine::getNoOfCentralFactories() const{
+    return this->noOfCentralFactories;
+};
+
+int GameEngine::getNoOfNormalFactories() const{
+    return this->noOfNormalFactories;
+};
 
 int GameEngine::getSeed() const{
     return this->seed;
@@ -306,7 +318,7 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
         }
     } else if (commands[0] == "save") {
         GameEngineIO* geIO = new GameEngineIO(this);
-        geIO->saveGame(commands[1]);
+        geIO->saveGame(commands[1], getGameModeAsString(), this->noOfPlayers);
         toReturn = Error_Message::SAVED;
         delete geIO;
     } else {
@@ -481,6 +493,19 @@ bool GameEngine::changeType(Type& tileType, char tileChar){
         changed = false;
     }
     return changed;
+}
+
+
+std::string GameEngine::getGameModeAsString(){
+    std::string toReturn = "";
+    if(this->greyMode)
+        toReturn = "grey";
+    if(this->sixBySixMode)
+        toReturn = "six";
+    if(this->standardMode)
+        toReturn = "standard";
+
+    return toReturn;
 }
 
 //calculates the points gained and lost through broken tiles and mosaic 

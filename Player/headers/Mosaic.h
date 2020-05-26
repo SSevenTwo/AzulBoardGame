@@ -118,6 +118,15 @@ private:
         {'Y', 'R', 'U', 'L', 'O' ,'B'}
     };
 
+    const char toSaveColourGridFor6x6[6][6] = {
+        {'b', 'y', 'r', 'u', 'l', 'o'} ,
+        {'o', 'b', 'y', 'r', 'u', 'l'} ,
+        {'l', 'o', 'b', 'y', 'r', 'u'} ,
+        {'u', 'l', 'o', 'b', 'y', 'r'} ,
+        {'r', 'u', 'l', 'o', 'b', 'y'} ,
+        {'y', 'r', 'u', 'l', 'o' ,'b'}
+    };
+
     char toSavecolourGrid[MAX_ROWS][MAX_COLS] = {
         {'b', 'y', 'r', 'u', 'l'} ,
         {'l', 'b', 'y', 'r', 'u'} ,

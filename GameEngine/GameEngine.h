@@ -81,6 +81,8 @@ public:
     void removeOtherFirstPlayerToken(int centralFactoryNo);
     
     //Getters
+    std::string getGameModeAsString();
+    std::vector<std::shared_ptr<Player>> getPlayers();
     std::shared_ptr<Player> getPlayer(int index);
     int getCurrentTurn() const;
     int getPlayerStartingNextRound() const;
@@ -90,6 +92,10 @@ public:
     std::shared_ptr<Factory> getFactory(unsigned const int number) const;
     LinkedList* getTileBag() const;
     LinkedList* getBoxLid() const;
+
+    //Getters for save functionality
+    int getNoOfCentralFactories() const;
+    int getNoOfNormalFactories() const;
     int getSeed() const;
 
     //Setters

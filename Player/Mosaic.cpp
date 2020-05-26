@@ -280,7 +280,9 @@ std::string Mosaic::rowToSave(int index){
             string += grid[index][i]->getColourType();
             string += " ";
         }else{
-            string += toSavecolourGrid[index][i];
+            if(this->sixBySixMode)
+                string+= toSaveColourGridFor6x6[index][i];
+            else string += toSavecolourGrid[index][i];
             string += " ";
         }      
     }

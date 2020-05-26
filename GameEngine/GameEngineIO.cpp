@@ -36,19 +36,20 @@ void GameEngineIO::loadGame(std::string fileName) {
     
     
     //Determine game mode
-    if(gameInfo[0] == "grey"){
-        this->greyMode = true;
-        this->noOfTilesPerFactory = 4;
-        this->noOfStorageRows = 5;
-    }else if(gameInfo[0] == "six"){
-        this->sixBySixMode = true;
-        this->noOfTilesPerFactory = 5;
-        this->noOfStorageRows = 6;
-    }if(gameInfo[0] == "standard"){
-        this->standard = true;
-        this->noOfTilesPerFactory = 4;
-        this->noOfStorageRows = 5;
-    }
+    // if(gameInfo[0] == "grey"){
+    //     this->greyMode = true;
+    //     this->noOfTilesPerFactory = 4;
+    //     this->noOfStorageRows = 5;
+    // }else if(gameInfo[0] == "six"){
+    //     this->sixBySixMode = true;
+    //     this->noOfTilesPerFactory = 5;
+    //     this->noOfStorageRows = 6;
+    // }if(gameInfo[0] == "standard"){
+    //     this->standard = true;
+    //     this->noOfTilesPerFactory = 4;
+    //     this->noOfStorageRows = 5;
+    // }
+    determineGameMode(gameInfo[0]);
 
     std::stringstream noOfPlayers(gameInfo[1]);
     noOfPlayers >> this->noOfPlayers;
@@ -82,6 +83,23 @@ void GameEngineIO::loadGame(std::string fileName) {
         throw "There was an error reading the file.";
     }
 
+}
+
+void GameEngineIO::determineGameMode(std::string gameMode){
+     //Determine game mode
+    if(gameMode == "grey"){
+        this->greyMode = true;
+        this->noOfTilesPerFactory = 4;
+        this->noOfStorageRows = 5;
+    }else if(gameMode == "six"){
+        this->sixBySixMode = true;
+        this->noOfTilesPerFactory = 5;
+        this->noOfStorageRows = 6;
+    }if(gameMode == "standard"){
+        this->standard = true;
+        this->noOfTilesPerFactory = 4;
+        this->noOfStorageRows = 5;
+    }
 }
 
 void GameEngineIO::loadPlayers(){
@@ -302,49 +320,59 @@ void GameEngineIO::loadSeed(){
     std::stringstream seedStream(gameInfo[index]);
     seedStream >> seed;
     gameEngine->setSeed(seed);
-    std::cout<< "Finished loading" <<std::endl;
 }
 
-void GameEngineIO::saveGame(std::string fileName) {
+void GameEngineIO::saveGame(std::string fileName, std::string gameMode, int noOfPlayers) {
     std::ofstream outFile;
     outFile.open(fileName);
+    
+    determineGameMode(gameMode);
 
-    Player* playerOne = gameEngine->getPlayerOne();
-    Player* playerTwo = gameEngine->getPlayerTwo();
+    std::vector<std::shared_ptr<Player>> players = gameEngine->getPlayers();
+
     if(outFile.good()){
         //save player info
-        outFile << playerOne->getName() << std::endl;
-        outFile << playerTwo->getName() << std::endl;
-        outFile << playerOne->getPoints() << std::endl;
-        outFile << playerTwo->getPoints() << std::endl; 
+        for(unsigned int i = 0; i < players.size(); ++i){
+            outFile << players[i]->getName() <<std::endl;
+        } 
+
+        for(unsigned int i = 0; i < players.size(); ++i){
+            outFile << players[i]->getPoints() <<std::endl;
+        }
+
         outFile << gameEngine->getCurrentTurn() << std::endl; 
 
         //save factories
-        for(int i = 0; i < NUM_FACTORIES; i++){
+        int noOfTotalFactories = 
+            gameEngine->getNoOfCentralFactories() + gameEngine->getNoOfNormalFactories();
+
+        for(int i = 0; i < noOfTotalFactories; i++){
             outFile << gameEngine->getFactory(i)->toSave() << std::endl;
         }
 
         //save mosaics 
-        for(int i = 0; i < MAX_ROWS; i++){
-            outFile << playerOne->getMosaicStorage()->getMosaic()->rowToSave(i) << std::endl;
+        int noOfMosaicRows = 5;
+        if(this->sixBySixMode){
+            noOfMosaicRows = 6;
         }
 
-        for(int i = 0; i < MAX_ROWS; i++){
-            outFile << playerTwo->getMosaicStorage()->getMosaic()->rowToSave(i) << std::endl;
+        for(unsigned int i = 0; i < players.size(); ++i){
+            for(int j = 0; j < noOfMosaicRows; ++j){
+                outFile << players[i]->getMosaicStorage()->getMosaic()->rowToSave(j) << std::endl;
+            }
         }
 
         //save storage areas
-        for(int i = 0; i < MAX_ROWS; i++){
-            outFile << playerOne->getMosaicStorage()->rowToSave(i) << std::endl;
-        }
-
-        for(int i = 0; i < MAX_ROWS; i++){
-            outFile << playerTwo->getMosaicStorage()->rowToSave(i) << std::endl;
+        for(unsigned int i = 0; i < players.size(); ++i){
+            for(int j = 0; j < noOfMosaicRows; ++j){
+                outFile << players[i]->getMosaicStorage()->rowToSave(j) << std::endl;
+            }
         }
 
         //save brokenTiles
-        outFile << playerOne->getMosaicStorage()->getBrokenTiles()->toSave() << std::endl;
-        outFile << playerTwo->getMosaicStorage()->getBrokenTiles()->toSave() << std::endl;
+        for(unsigned int i = 0; i < players.size(); ++i){
+            outFile << players[i]->getMosaicStorage()->getBrokenTiles()->toSave() << std::endl;
+        }
 
         //save box lid tiles
         outFile << gameEngine->getBoxLid()->toSave() <<std::endl;
