@@ -175,7 +175,26 @@ void MosaicStorage::endOfRoundMove(int col){
 bool MosaicStorage::greyModeEndOfRoundMove(int row, int col){
     bool success = false;
     std::shared_ptr<Tile>* tiles = getRow(row);
-    if(!mosaic->colourExistsInCol(tiles[0]->getType(),col) && mosaic->isSpaceFree(row, col)){
+    if(col == -1){
+        for(int i = 0; i < (row + 1); ++i){
+            if(i == 0){
+                if(brokenTiles->getSize() < brokenTiles->getMaxSize()){
+                    this->brokenTiles->addTile(tiles[i]);
+                    grid[row][i] = nullptr;
+                }else{
+                    this->discardedTiles.push_back(tiles[i]);
+                    grid[row][i] = nullptr;
+                }
+            }
+            else{
+                this->discardedTiles.push_back(tiles[i]);
+                grid[row][i] = nullptr;
+            }
+            
+        }  
+        success = true;
+    }
+    else if(!mosaic->colourExistsInCol(tiles[0]->getType(),col) && mosaic->isSpaceFree(row, col)){
         for(int i = 0; i < (row + 1); ++i){
             if(i == 0){
                 this->moveToMosaic(tiles[i], row, col);
@@ -201,7 +220,7 @@ void MosaicStorage::addTile(std::shared_ptr<Tile> tile, unsigned const int row) 
         }
         grid[row][col] = tile;
     }else{
-        if(brokenTiles->getSize() < 7 ){
+        if(brokenTiles->getSize() < brokenTiles->getMaxSize() ){
             brokenTiles->addTile(tile);
         }else{
             discardedTiles.push_back(tile);

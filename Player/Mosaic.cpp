@@ -1,7 +1,5 @@
 #include "headers/Mosaic.h"
 
-#include <iostream>
-
 Mosaic::Mosaic(std::string gameMode){
     determineGameMode(gameMode);
 
@@ -234,13 +232,10 @@ void Mosaic::incrementColorCounter(Type tileType){
 int Mosaic::getColourColumn(unsigned const int row, unsigned const int colour) {
     int toReturn = -1;
     if (!this->sixBySixMode && (row >= 0 && row < maxNoRows && colour >= 0 && colour < maxNoCols)) {
-        std::cout<<"BRO WRONG ONE"<<std::endl;
 
         toReturn = colourColumns[row][colour];
     } else{
         toReturn = colourColumnsFor6x6[row][colour];
-        std::cout<< "ROW " << row <<std::endl;
-        std::cout<<"BRO RIGHT ONE " << toReturn << " COLOR " << colour <<std::endl;
     }
     return toReturn;
 }

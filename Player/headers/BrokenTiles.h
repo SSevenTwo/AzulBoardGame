@@ -11,7 +11,8 @@ public:
 
     //Getters
     std::shared_ptr<Tile>* getTiles();
-    int getSize();
+    int getMaxSize() const;
+    int getSize() const;
 
     //Move tiles
     void addTile(std::shared_ptr<Tile> tile);

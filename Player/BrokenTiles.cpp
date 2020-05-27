@@ -45,7 +45,6 @@ void BrokenTiles::clear() {
 }
 
 void BrokenTiles::addTile(std::shared_ptr<Tile> tile) {
-    std::cout<< "-----------------------------------------------------WHAT IS GOING ON" <<std::endl;
     tiles[size] = tile;
     ++size;
 }
@@ -64,8 +63,12 @@ std::string BrokenTiles::toString() {
     return string;
 }
 
-int BrokenTiles::getSize(){
+int BrokenTiles::getSize() const{
     return this->size;
+}
+
+int BrokenTiles::getMaxSize() const{
+    return this->maxNoOfTiles;
 }
 
 std::string BrokenTiles::toSave(){

@@ -25,6 +25,8 @@ public:
     void loadLid();
     void loadSeed();
     void determineGameMode(std::string gameMode);
+    void determineNoOfPlayers(std::string playerNo);
+    void determineNoOfCentralFactories(std::string noOfCentralFactories);
     
 private:
     GameEngine* gameEngine;

@@ -7,12 +7,6 @@
 #define MAX_COLS        5
 #define MAX_NO_TILES    5
 
-// #define RED         0
-// #define YELLOW      1
-// #define DARK_BLUE   2
-// #define LIGHT_BLUE  3
-// #define BLACK       4
-
 class Mosaic{
 public:
     Mosaic(std::string gameMode);

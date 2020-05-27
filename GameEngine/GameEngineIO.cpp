@@ -4,7 +4,11 @@
 
 GameEngineIO::GameEngineIO(GameEngine* engine){
     this->gameEngine = engine;
+    this->greyMode = false;
+    this->sixBySixMode = false;
+    this->standard = false;
     this->readError = false;
+    this->index = 0;
 }
 GameEngineIO::~GameEngineIO(){}
 
@@ -29,45 +33,15 @@ void GameEngineIO::loadGame(std::string fileName) {
 
     ifs.close();
 
-    //debug print
-    // for(unsigned int i = 0; i<gameInfo.size(); ++i){
-    //     std::cout<< gameInfo[i] <<std::endl;
-    // }
-    
-    
-    //Determine game mode
-    // if(gameInfo[0] == "grey"){
-    //     this->greyMode = true;
-    //     this->noOfTilesPerFactory = 4;
-    //     this->noOfStorageRows = 5;
-    // }else if(gameInfo[0] == "six"){
-    //     this->sixBySixMode = true;
-    //     this->noOfTilesPerFactory = 5;
-    //     this->noOfStorageRows = 6;
-    // }if(gameInfo[0] == "standard"){
-    //     this->standard = true;
-    //     this->noOfTilesPerFactory = 4;
-    //     this->noOfStorageRows = 5;
-    // }
+    // Load game settings
     determineGameMode(gameInfo[0]);
-
-    std::stringstream noOfPlayers(gameInfo[1]);
-    noOfPlayers >> this->noOfPlayers;
-
-    if(this->noOfPlayers == 2){
-        this->noOfFactories = 5;
-    }
-    else if(this->noOfPlayers == 3){
-        this->noOfFactories = 7;
-    }else if(this->noOfPlayers == 4){
-        this->noOfFactories = 9;
-    }
-
-    std::stringstream noOfCentralFactories(gameInfo[2]);
-    noOfCentralFactories >> this->noOfCentralFactories;
+    determineNoOfPlayers(gameInfo[1]);
+    determineNoOfCentralFactories(gameInfo[2]);
     
-    //load the individual components from the file
+    // Set game settings according to above
     gameEngine->loadGameSettings(this->noOfPlayers,this->noOfCentralFactories,gameInfo[0]);
+
+    // load the individual components from the file
     loadPlayers();
     loadFactories();
 
@@ -85,18 +59,45 @@ void GameEngineIO::loadGame(std::string fileName) {
 
 }
 
+
+void GameEngineIO::determineNoOfCentralFactories(std::string noOfCentralFactories){
+    std::stringstream noOfCentralFactoriesAsString(noOfCentralFactories);
+    noOfCentralFactoriesAsString >> this->noOfCentralFactories;
+}
+
+
+void GameEngineIO::determineNoOfPlayers(std::string playerNo){
+    std::stringstream noOfPlayers(playerNo);
+    noOfPlayers >> this->noOfPlayers;
+
+    if(this->noOfPlayers == 2){
+        this->noOfFactories = 5;
+    }
+    else if(this->noOfPlayers == 3){
+        this->noOfFactories = 7;
+    }else if(this->noOfPlayers == 4){
+        this->noOfFactories = 9;
+    }
+}
+
 void GameEngineIO::determineGameMode(std::string gameMode){
      //Determine game mode
     if(gameMode == "grey"){
         this->greyMode = true;
+        this->sixBySixMode = false;
+        this->standard = false;
         this->noOfTilesPerFactory = 4;
         this->noOfStorageRows = 5;
     }else if(gameMode == "six"){
         this->sixBySixMode = true;
+        this->greyMode = true;
+        this->standard = false;
         this->noOfTilesPerFactory = 5;
         this->noOfStorageRows = 6;
     }if(gameMode == "standard"){
         this->standard = true;
+        this->greyMode = false;
+        this->sixBySixMode = false;
         this->noOfTilesPerFactory = 4;
         this->noOfStorageRows = 5;
     }
@@ -111,7 +112,7 @@ void GameEngineIO::loadPlayers(){
     this->index = 3;
     for(unsigned int i = 0; i < noOfPlayers; ++i){
         this->gameEngine->setPlayer(gameInfo[index],i+1,gameInfo[0]);
-        ++index;
+        ++this->index;
     }
 
     // setting points
@@ -121,7 +122,7 @@ void GameEngineIO::loadPlayers(){
         playerPoints >> points;
         std::shared_ptr<Player> player = this->gameEngine->getPlayer(i);
         player->setPoints(points);
-        ++index;
+        ++this->index;
     }
 
     // Load Next Turn info into game
@@ -129,9 +130,9 @@ void GameEngineIO::loadPlayers(){
     int currentTurn;
     currentTurnAsString >> currentTurn;
     gameEngine->setCurrentTurn(currentTurn);
-    ++index;
+    ++this->index;
 
-    std::cout << "players loaded" << std::endl;
+    std::cout << "players loaded"<< this->index << std::endl;
 }
 
 void GameEngineIO::loadFactories(){
@@ -158,7 +159,7 @@ void GameEngineIO::loadFactories(){
         }
         ++index;
     }
-    std::cout << "Finished loading factories" << std::endl;
+    std::cout << "Finished loading factories" << this->index << std::endl;
 }
 
 void GameEngineIO::loadMosaics(){
@@ -286,6 +287,7 @@ void GameEngineIO::loadLid(){
     }
     tilesToAdd.clear();
     ++index;
+    std::cout<< "Loaded lid" << std::endl;
 }
 
 void GameEngineIO::loadBag(){
@@ -299,6 +301,7 @@ void GameEngineIO::loadBag(){
     while (tileBagStream.good()) {
         tilesToAdd.push_back(toAdd);
         tileBagStream >> toAdd;
+        std::cout<< toAdd << std::endl;
     }
 
     unsigned int lastIndex = tilesToAdd.size() - 1;
@@ -313,6 +316,7 @@ void GameEngineIO::loadBag(){
     }
     tilesToAdd.clear();
     ++index;
+    std::cout<< "Loaded bag" << std::endl;
 }
 
 void GameEngineIO::loadSeed(){
@@ -320,6 +324,7 @@ void GameEngineIO::loadSeed(){
     std::stringstream seedStream(gameInfo[index]);
     seedStream >> seed;
     gameEngine->setSeed(seed);
+    std::cout<< "Loaded seed" << std::endl;
 }
 
 void GameEngineIO::saveGame(std::string fileName, std::string gameMode, int noOfPlayers) {
@@ -331,6 +336,11 @@ void GameEngineIO::saveGame(std::string fileName, std::string gameMode, int noOf
     std::vector<std::shared_ptr<Player>> players = gameEngine->getPlayers();
 
     if(outFile.good()){
+
+        outFile << gameEngine->getGameModeAsString() << std::endl;
+        outFile << gameEngine->getPlayers().size() << std::endl;
+        outFile << gameEngine->getNoOfCentralFactories() << std::endl;
+
         //save player info
         for(unsigned int i = 0; i < players.size(); ++i){
             outFile << players[i]->getName() <<std::endl;

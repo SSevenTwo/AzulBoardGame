@@ -86,9 +86,7 @@ void GameEngineCallback::playerEndOfRoundResult(std::vector<std::shared_ptr<Play
     }
     
     std::cout<< "\n=====End of round - Beginning next round!=====\n" << std::endl;
-    // std::cout << players[0]->getName() << " Points: " << players[0]->getPoints() << std::endl;
-    // std::cout << players[1]->getName() << " Points: " << players[1]->getPoints() << std::endl;
-    // std::cout<< "\n=====End of round - Beginning next round!=====\n" << std::endl;
+ 
 }
 
 void GameEngineCallback::playerEndOfGameResult(std::vector<std::shared_ptr<Player>> players, int noOfPlayers) {
@@ -106,14 +104,7 @@ void GameEngineCallback::playerEndOfGameResult(std::vector<std::shared_ptr<Playe
     }
 
     std::cout << "Winner is " << players[winner]->getName() << "!\n" << std::endl;
-    // std::cout << players[0]->getName() << " Points: " << players[0]->getPoints() << std::endl;
-    // std::cout << players[1]->getName() << " Points: " << players[1]->getPoints() << std::endl;
-    // std::cout<< "\n=================End of Game=================" << std::endl;
-    // if (players[0]->getPoints() > players[1]->getPoints()) {
-    //     std::cout << "Winner is " << players[0]->getName() << "!\n" << std::endl;
-    // } else {
-    //     std::cout << "Winner is " << players[1]->getName() << "!\n" << std::endl;
-    // }
+
 }
 
 void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory) {

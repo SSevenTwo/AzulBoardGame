@@ -35,9 +35,14 @@ public:
     void instantiateFactories();
 
     //Gameplay Conditions
-    void newGame(const std::string playerNames[], int noOfPlayers, int noOfCentralFactories, std::string gameMode);
-    void loadGameSettings(int noOfPlayers, int noOfCentralFactories, std::string gameMode);
-    void determineGameMode(std::string gameMode);
+    void newGame(const std::string playerNames[], const unsigned int noOfPlayers, 
+        const unsigned int noOfCentralFactories, const std::string gameMode);
+    void loadGameSettings(const unsigned int noOfPlayers, 
+        const unsigned int noOfCentralFactories, const std::string gameMode);
+    void determineGameMode(const std::string gameMode);
+    void determineNoOfPlayersAndFactories(const unsigned int noOfPlayers, 
+        const unsigned int noOfCentralFactories);
+    void makePlayers(const std::string playerNames[], const std::string gameMode);
     void gameplayLoop(bool& eof, bool& continueMenuLoop);
     bool winConditionMet();
     bool endOfRoundConditionMet();
@@ -53,6 +58,8 @@ public:
 
     //Player input validation
     bool checkInput();
+    bool commandsAreValid(std::string commands[], 
+        int& factoryNo, Type& tileType, int& storageRow, int& centralFactoryNo);
     bool checkCommand1(const std::string input, int& factoryNo);
     bool checkCommand2(const std::string input, Type& tileType);
     bool checkCommand3(const std::string input, int& storageRow);
@@ -69,6 +76,8 @@ public:
     void moveTilesToBrokenTiles(std::shared_ptr<Player> player, unsigned const int factoryNumber, const Type type);
     void moveTilesToLid(std::shared_ptr<Player> player);
     void movePlayerTilesToMosaic();
+    void movePlayerTilesToMosaicForGreyMode();
+    bool askForMosaicRow(std::shared_ptr<MosaicStorage> playerMosaicStorage, int playerNo, int row);
 
     //Component Utilities
     void populateFactories();
@@ -87,8 +96,6 @@ public:
     int getCurrentTurn() const;
     int getPlayerStartingNextRound() const;
     std::shared_ptr<Player> getCurrentPlayer() const;
-    Player* getPlayerOne() const;
-    Player* getPlayerTwo() const;
     std::shared_ptr<Factory> getFactory(unsigned const int number) const;
     LinkedList* getTileBag() const;
     LinkedList* getBoxLid() const;
@@ -100,8 +107,6 @@ public:
 
     //Setters
     void setPlayer(std::string name, int playerNo, std::string gameMode);
-    void setPlayerOne(std::string player);
-    void setPlayerTwo(std::string player);
     void setSeed(int seed);
     void setCurrentTurn(int playerNo);
     void setPlayerStartingNextRound(int playerNo);
