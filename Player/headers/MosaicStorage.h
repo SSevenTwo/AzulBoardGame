@@ -16,8 +16,8 @@ public:
     //Getters
     std::shared_ptr<Tile>* getRow(unsigned const int row);
     std::shared_ptr<Tile>** getGrid();
-    BrokenTiles* getBrokenTiles();
-    Mosaic* getMosaic();
+    std::shared_ptr<BrokenTiles> getBrokenTiles();
+    std::shared_ptr<Mosaic> getMosaic();
 
     //Tile movers
     void clearRow(unsigned const int row);
@@ -52,9 +52,9 @@ public:
 
 private:
     std::shared_ptr<Tile>** grid;
-    BrokenTiles* brokenTiles;
+    std::shared_ptr<BrokenTiles> brokenTiles;
     std::vector<std::shared_ptr<Tile>> discardedTiles;
-    Mosaic* mosaic;
+    std::shared_ptr<Mosaic> mosaic;
     bool greyMode;
     bool sixBySixMode;
     unsigned int maxNoRows;

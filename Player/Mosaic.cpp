@@ -260,7 +260,10 @@ std::string Mosaic::templateRowToString(int index) {
     std::string string = "";
 
     for(unsigned int i = 0; i< maxNoCols; ++i){
-        string += colourGrid[index][i];
+        if(sixBySixMode)
+            string+= colourGridFor6x6[index][i];
+        else
+            string += colourGrid[index][i];
         string += " ";
        
     }

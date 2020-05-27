@@ -16,15 +16,12 @@ void Player::determineGameMode(std::string gameMode){
     if(gameMode == "grey"){
         this->greyMode = true;
         this->sixBySixMode = false;
-        std::cout << "GREY ACTIVATED PLAYER DEPLOYED" << std::endl;
     } else if(gameMode == "six"){
         this->greyMode = false;
         this->sixBySixMode = true;
-        std::cout << "SIX ACTIVATED PLAYER DEPLOYED" << std::endl;
     }else{
         this->greyMode = false;
         this->sixBySixMode = false;
-        std::cout << "STANDARD ACTIVATED PLAYER DEPLOYED" << std::endl;
     }
 }
 

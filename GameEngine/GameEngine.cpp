@@ -641,7 +641,7 @@ void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player,
         maxBrokenTiles=8;
     std::vector<std::shared_ptr<Tile>> allTiles =  factories[factoryNumber]->getCopiedTilesAndRemove();
     std::shared_ptr<MosaicStorage> mosaicStorage = player->getMosaicStorage();
-    BrokenTiles* brokenTiles = mosaicStorage->getBrokenTiles();
+    std::shared_ptr<BrokenTiles> brokenTiles = mosaicStorage->getBrokenTiles();
     
         int size = allTiles.size();
         for (int i = 0; i < size; ++i) {
@@ -874,5 +874,14 @@ void GameEngine::resetGame(){
     factories.clear();
     bag->clear();
     boxLid->clear();
+    this->currentTurn = 0;
+    this->playerStartingNextRound = 0;
+    this->noOfPlayers = 0;
+    this->noOfCentralFactories = 0;
+    this->noOfNormalFactories = 0;
+    this->use2ndFactory = false;
+    this->greyMode = false;
+    this->sixBySixMode = false;
+    this->standardMode = true;
 }
 

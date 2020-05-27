@@ -13,13 +13,12 @@ MosaicStorage::MosaicStorage(std::string gameMode) {
         this->grid[row] = new std::shared_ptr<Tile>[row+1];
     }
 
-    this->mosaic = new Mosaic(gameMode);
-    this->brokenTiles = new BrokenTiles(noOfBrokenTiles);
+    this->mosaic = std::make_shared<Mosaic>(gameMode);
+    this->brokenTiles = std::make_shared<BrokenTiles>(noOfBrokenTiles);
     
 }
 
 MosaicStorage::~MosaicStorage() {
-    delete brokenTiles;
     brokenTiles = nullptr;
 
 
@@ -138,7 +137,7 @@ bool MosaicStorage::isValidSixBySixAdd(Type type, unsigned int row){
 
 //we move the broken tiles to discarded tiles so we can later move them to the box lid
 void MosaicStorage::endOfRoundDiscardBrokenTiles(){
-    BrokenTiles* brokenTiles = getBrokenTiles();
+    std::shared_ptr<BrokenTiles> brokenTiles = getBrokenTiles();
     std::shared_ptr<Tile>* tiles = brokenTiles->getTiles();
     int size = brokenTiles->getSize();
     for(int i = 0; i < size; ++i){
@@ -240,7 +239,7 @@ Type MosaicStorage::getRowType(unsigned const int row){
 
 }
 
-BrokenTiles* MosaicStorage::getBrokenTiles() {
+std::shared_ptr<BrokenTiles> MosaicStorage::getBrokenTiles() {
     return brokenTiles;
 }
 
@@ -269,7 +268,7 @@ void MosaicStorage::moveToBrokenTiles(std::shared_ptr<Tile>* tiles) {
     }
 }
 
-Mosaic* MosaicStorage::getMosaic() {
+std::shared_ptr<Mosaic> MosaicStorage::getMosaic() {
     return mosaic;
 }
 

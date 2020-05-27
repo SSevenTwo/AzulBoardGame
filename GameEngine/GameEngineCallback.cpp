@@ -12,19 +12,19 @@ void GameEngineCallback::playerBoardUpdate(std::vector<std::shared_ptr<Player>> 
     std::string outputString;
 
     std::shared_ptr<MosaicStorage> mStorage = players[0]->getMosaicStorage();
-    Mosaic* mosaic = players[0]->getMosaicStorage()->getMosaic();    
+    std::shared_ptr<Mosaic> mosaic = players[0]->getMosaicStorage()->getMosaic();    
     std::shared_ptr<MosaicStorage> mStorage1 = players[1]->getMosaicStorage();
-    Mosaic* mosaic1 = players[1]->getMosaicStorage()->getMosaic();
+    std::shared_ptr<Mosaic> mosaic1 = players[1]->getMosaicStorage()->getMosaic();
 
-    outputString = "Mosaic for " + players[0]->getName() + "\t\t\t" + "Mosaic for " + players[1]->getName() + "\n"
-        + mStorage->rowToString(0) + mosaic->rowToString(0) + "\t" + mStorage1->rowToString(0) + mosaic1->rowToString(0) + "\n"
-        + mStorage->rowToString(1) + mosaic->rowToString(1) + "\t" + mStorage1->rowToString(1) + mosaic1->rowToString(1) + "\n"
-        + mStorage->rowToString(2) + mosaic->rowToString(2) + "\t" + mStorage1->rowToString(2) + mosaic1->rowToString(2) + "\n"
-        + mStorage->rowToString(3) + mosaic->rowToString(3) + "\t" + mStorage1->rowToString(3) + mosaic1->rowToString(3) + "\n"
-        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\t" + mStorage1->rowToString(4) + mosaic1->rowToString(4) + "\n";
+    outputString = "Mosaic for " + players[0]->getName() + "\t\t\t" + "Mosaic for " + players[1]->getName() + "\t\t\tMosaic Template:\n"
+        + mStorage->rowToString(0) + mosaic->rowToString(0) + "\t" + mStorage1->rowToString(0) + mosaic1->rowToString(0) + "\t" + mosaic1->templateRowToString(0) + "\n"
+        + mStorage->rowToString(1) + mosaic->rowToString(1) + "\t" + mStorage1->rowToString(1) + mosaic1->rowToString(1) + "\t" + mosaic1->templateRowToString(1) + "\n"
+        + mStorage->rowToString(2) + mosaic->rowToString(2) + "\t" + mStorage1->rowToString(2) + mosaic1->rowToString(2) + "\t" + mosaic1->templateRowToString(2) + "\n"
+        + mStorage->rowToString(3) + mosaic->rowToString(3) + "\t" + mStorage1->rowToString(3) + mosaic1->rowToString(3) + "\t" + mosaic1->templateRowToString(3) + "\n"
+        + mStorage->rowToString(4) + mosaic->rowToString(4) + "\t" + mStorage1->rowToString(4) + mosaic1->rowToString(4) + "\t" + mosaic1->templateRowToString(4) + "\n";
     
     if(sixBySix){
-        outputString +=mStorage->rowToString(5) + mosaic->rowToString(5) + "\t" + mStorage1->rowToString(5) + mosaic1->rowToString(5) + "\n";
+        outputString +=mStorage->rowToString(5) + mosaic->rowToString(5) + "\t" + mStorage1->rowToString(5) + mosaic1->rowToString(5) + "\t" + mosaic1->templateRowToString(5) + "\n";
         outputString += players[0]->getMosaicStorage()->getBrokenTiles()->toString() + "\t" + players[1]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
         }
     else  outputString += players[0]->getMosaicStorage()->getBrokenTiles()->toString() + "\t\t" + players[1]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
@@ -64,7 +64,6 @@ void GameEngineCallback::playerBoardUpdate(std::vector<std::shared_ptr<Player>> 
         else  outputString += players[2]->getMosaicStorage()->getBrokenTiles()->toString() + "\t\t" + players[3]->getMosaicStorage()->getBrokenTiles()->toString() + "\n\n";
     }
     std::cout << outputString << std::endl;
-    // mosaic->templateRowToString(0)
 }
 
 void GameEngineCallback::playerTurnUpdate(std::string playerName) {
@@ -94,20 +93,39 @@ void GameEngineCallback::playerEndOfGameResult(std::vector<std::shared_ptr<Playe
         std::cout << players[i]->getName() << " Points: " << players[i]->getPoints() << std::endl;
     }
     std::cout<< "\n=================End of Game=================" << std::endl;
-    int winner = 0;
     int pointsOfWinner = players[0]->getPoints();
+
     for(int i = 0; i<noOfPlayers; ++i){
         if(players[i]->getPoints() > pointsOfWinner){
-            winner = i;
             pointsOfWinner = players[i]->getPoints();
         }
     }
 
-    std::cout << "Winner is " << players[winner]->getName() << "!\n" << std::endl;
+    std::vector<int> winners;
+    for(int i = 0; i < noOfPlayers; ++i){
+        if(players[i]->getPoints() == pointsOfWinner){
+            winners.push_back(i);
+        }
+    }
+
+    if( winners.size() > 1){
+        std::cout << "Winners are "; 
+        for(unsigned int i = 0; i<winners.size();++i){
+            std::cout << players[i]->getName();
+            if(i != winners.size()-1){
+                std::cout << " and ";
+            }
+        }
+    }else{
+        std::cout << "Winner is " << players[winners[0]]->getName(); 
+    }
+    
+    std::cout << "!\n" << std::endl;
 
 }
 
 void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory) {
+
     std::cout<< "--------------------Next Turn------------------\n" << std::endl;
     std::string outputString = "";
     int noOfCenterFactories = 1;
@@ -134,6 +152,7 @@ void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factor
             outputString.push_back(tiles[j]->getColourType());
             outputString += " ";
         }
+
         outputString += "\n";
     }
 
