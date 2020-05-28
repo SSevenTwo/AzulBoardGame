@@ -10,6 +10,7 @@ GameEngineIO::GameEngineIO(GameEngine* engine){
     this->readError = false;
     this->index = 0;
 }
+
 GameEngineIO::~GameEngineIO(){}
 
 void GameEngineIO::loadGame(std::string fileName) {
@@ -19,9 +20,8 @@ void GameEngineIO::loadGame(std::string fileName) {
     std::string currentInfo;
     std::getline(ifs, currentInfo);
 
-    if(!ifs.is_open()){
+    if(!ifs.is_open())
         throw "File not found";
-    }
 
     unsigned int i = 0;
 
@@ -57,8 +57,6 @@ void GameEngineIO::loadGame(std::string fileName) {
     loadLid();
     loadBag();
     loadSeed();
-
-
 }
 
 void GameEngineIO::setLegacySaveSettings(){
@@ -73,25 +71,21 @@ void GameEngineIO::setLegacySaveSettings(){
     this->noOfCentralFactories = 1;
 }
 
-
 void GameEngineIO::determineNoOfCentralFactories(std::string noOfCentralFactories){
     std::stringstream noOfCentralFactoriesAsString(noOfCentralFactories);
     noOfCentralFactoriesAsString >> this->noOfCentralFactories;
 }
 
-
 void GameEngineIO::determineNoOfPlayers(std::string playerNo){
     std::stringstream noOfPlayers(playerNo);
     noOfPlayers >> this->noOfPlayers;
 
-    if(this->noOfPlayers == 2){
+    if(this->noOfPlayers == 2)
         this->noOfFactories = 5;
-    }
-    else if(this->noOfPlayers == 3){
+    else if(this->noOfPlayers == 3)
         this->noOfFactories = 7;
-    }else if(this->noOfPlayers == 4){
+    else if(this->noOfPlayers == 4)
         this->noOfFactories = 9;
-    }
 }
 
 void GameEngineIO::determineGameMode(std::string gameMode){
@@ -123,11 +117,10 @@ void GameEngineIO::loadPlayers(){
         throw "Both players cannot have the same name.";
     }
 
-    if(legacySave){
+    if(legacySave)
         this->index = 0;
-    }else{
+    else
         this->index = 3;
-    }
 
     for(unsigned int i = 0; i < noOfPlayers; ++i){
         this->gameEngine->setPlayer(gameInfo[index],i,gameInfo[0]);
