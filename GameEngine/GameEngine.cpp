@@ -443,6 +443,9 @@ bool GameEngine::winConditionMet(){
         }
     }
 
+    if(outOfTiles)
+        winConditionMet = true;
+
     return winConditionMet;
 }
 
@@ -582,6 +585,14 @@ void GameEngine::endOfRoundPreparations(){
     for(int i = 0; i<noOfPlayers; ++i){
         moveTilesToLid(this->players[i]);
     }
+    populateFactories();
+    setCurrentTurn(getPlayerStartingNextRound());
+    int playerStartingNextRound = getPlayerStartingNextRound();
+    playerStartingNextRound++;
+    if( playerStartingNextRound == noOfPlayers){
+        playerStartingNextRound = 0;
+    }
+    setPlayerStartingNextRound(playerStartingNextRound);
 }
 
 bool GameEngine::moveTilesFromFactory(std::shared_ptr<Player> player,unsigned const int factoryNumber,int centralFactoryNo,unsigned const int row, const Type type, const bool toBroken) {
@@ -707,7 +718,11 @@ void GameEngine::populateFactories(){
                 factories[i]->addTile(bag->getAndRemoveFirstTile());
             } else {
                 refillBag();
-                factories[i]->addTile(bag->getAndRemoveFirstTile());
+                if(bag->getSize() == 0){
+                    outOfTiles = true;
+                }else{
+                    factories[i]->addTile(bag->getAndRemoveFirstTile());
+                }
             }
         }
     }
@@ -806,9 +821,10 @@ std::string GameEngine::interpretPlayerTurn(const int result, int helpNo){
     return toReturn;
 }
 
-// 1 = normal turn
-// 2 = choose central factory
-// 3 = choose mosaic column for grey mode
+/* 1 = normal turn
+ * 2 = choose central factory
+ * 3 = choose mosaic column for grey mode
+ */
 std::string GameEngine::help(int help){
     std::string toReturn = "";
     if(help == 1){
@@ -845,11 +861,8 @@ void GameEngine::getPlayerInputInLoop(int& result, int& help){
 
 //loop enables the game to keep playing until someone wins or someone quits
 void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
-    Input input;
     while(!endOfCommands && !std::cin.eof() && !winConditionMet()){
-        
         while(!endOfCommands && !endOfRoundConditionMet()){
-
             //output relevant information to players
             gec->boardComponentUpdate(factories, use2ndFactory);
             gec->playerBoardUpdate(this->players, noOfPlayers, sixBySixMode, greyMode);
@@ -866,37 +879,28 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
                 endOfCommands = true;
                 continueMenuLoop = false;
             }
-
             swapCurrentTurn();
         }
-        if(!endOfCommands){
+        if(!endOfCommands)
             endOfRoundPreparations();
-            populateFactories();
-            setCurrentTurn(getPlayerStartingNextRound());
-            int playerStartingNextRound = getPlayerStartingNextRound();
-            playerStartingNextRound++;
-            if( playerStartingNextRound == noOfPlayers){
-                playerStartingNextRound = 0;
-            }
-            setPlayerStartingNextRound(playerStartingNextRound);
-        }
     }
-
     //loop breaks so we can finalise scores and decide on winner
-    if (winConditionMet()) {
-        gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode, greyMode);
-        calculateEndGamePoints();
+    if (winConditionMet())
+        endOfGamePreparations();
+}
 
-        // When testing, we save the game before it ends to see the end of game save file
-        if (testing) {
-            GameEngineIO* geIO = new GameEngineIO(this);
-            geIO->saveGame("actualoutcome.save",getGameModeAsString(),noOfPlayers);
-            delete geIO;
-        }
+void GameEngine::endOfGamePreparations(){
+    gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode, greyMode);
+    calculateEndGamePoints();
 
-        resetGame();
+    // When testing, we save the game before it ends to see the end of game save file
+    if (testing) {
+        GameEngineIO* geIO = new GameEngineIO(this);
+        geIO->saveGame("actualoutcome.save",getGameModeAsString(),noOfPlayers);
+        delete geIO;
     }
 
+    resetGame();
 }
 
 void GameEngine::calculateEndGamePoints() {

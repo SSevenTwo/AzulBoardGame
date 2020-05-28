@@ -33,10 +33,15 @@ void GameEngineIO::loadGame(std::string fileName) {
 
     ifs.close();
 
-    // Load game settings
-    determineGameMode(gameInfo[0]);
-    determineNoOfPlayers(gameInfo[1]);
-    determineNoOfCentralFactories(gameInfo[2]);
+    if(gameInfo.size() == LEGACY_SAVE){
+        setLegacySaveSettings();
+    }
+    else{
+        // Load game settings
+        determineGameMode(gameInfo[0]);
+        determineNoOfPlayers(gameInfo[1]);
+        determineNoOfCentralFactories(gameInfo[2]);
+    }
     
     // Set game settings according to above
     gameEngine->loadGameSettings(this->noOfPlayers,this->noOfCentralFactories,gameInfo[0]);
@@ -57,6 +62,18 @@ void GameEngineIO::loadGame(std::string fileName) {
         throw "There was an error reading the file.";
     }
 
+}
+
+void GameEngineIO::setLegacySaveSettings(){
+    this->legacySave = true;
+    this->standard = true;
+    this->greyMode = false;
+    this->sixBySixMode = false;
+    this->noOfTilesPerFactory = 4;
+    this->noOfStorageRows = 5;
+    this->noOfPlayers = 2;
+    this->noOfFactories = 5;
+    this->noOfCentralFactories = 1;
 }
 
 
@@ -109,7 +126,12 @@ void GameEngineIO::loadPlayers(){
         throw "Both players cannot have the same name.";
     }
 
-    this->index = 3;
+    if(legacySave){
+        this->index = 0;
+    }else{
+        this->index = 3;
+    }
+
     for(unsigned int i = 0; i < noOfPlayers; ++i){
         this->gameEngine->setPlayer(gameInfo[index],i+1,gameInfo[0]);
         ++this->index;
@@ -131,8 +153,6 @@ void GameEngineIO::loadPlayers(){
     currentTurnAsString >> currentTurn;
     gameEngine->setCurrentTurn(currentTurn);
     ++this->index;
-
-    std::cout << "players loaded"<< this->index << std::endl;
 }
 
 void GameEngineIO::loadFactories(){
@@ -159,7 +179,6 @@ void GameEngineIO::loadFactories(){
         }
         ++index;
     }
-    std::cout << "Finished loading factories" << this->index << std::endl;
 }
 
 void GameEngineIO::loadMosaics(){
@@ -194,8 +213,6 @@ void GameEngineIO::loadMosaics(){
         player->getMosaicStorage()->getMosaic()->resetPoints();
     }
 
-    std::cout << "Mosaics loaded" << std::endl;
-    
 }
 
 void GameEngineIO::loadStorageArea(){
@@ -228,7 +245,6 @@ void GameEngineIO::loadStorageArea(){
             ++index;
         }
     }
-    std::cout<<"Loaded storage" <<std::endl;
 }
 
 void GameEngineIO::loadBrokenTiles(){
@@ -257,7 +273,6 @@ void GameEngineIO::loadBrokenTiles(){
         ++index;
     }
 
-    std::cout<<"Loaded broken tiles" <<std::endl;
 }
 
 void GameEngineIO::loadLid(){
@@ -287,7 +302,6 @@ void GameEngineIO::loadLid(){
     }
     tilesToAdd.clear();
     ++index;
-    std::cout<< "Loaded lid" << std::endl;
 }
 
 void GameEngineIO::loadBag(){
@@ -301,7 +315,6 @@ void GameEngineIO::loadBag(){
     while (tileBagStream.good()) {
         tilesToAdd.push_back(toAdd);
         tileBagStream >> toAdd;
-        std::cout<< toAdd << std::endl;
     }
 
     unsigned int lastIndex = tilesToAdd.size() - 1;
@@ -316,7 +329,6 @@ void GameEngineIO::loadBag(){
     }
     tilesToAdd.clear();
     ++index;
-    std::cout<< "Loaded bag" << std::endl;
 }
 
 void GameEngineIO::loadSeed(){
@@ -324,7 +336,6 @@ void GameEngineIO::loadSeed(){
     std::stringstream seedStream(gameInfo[index]);
     seedStream >> seed;
     gameEngine->setSeed(seed);
-    std::cout<< "Loaded seed" << std::endl;
 }
 
 void GameEngineIO::saveGame(std::string fileName, std::string gameMode, int noOfPlayers) {

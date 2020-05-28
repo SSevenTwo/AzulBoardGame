@@ -48,6 +48,7 @@ public:
     bool winConditionMet();
     bool endOfRoundConditionMet();
     void endOfRoundPreparations();
+    void endOfGamePreparations();
 
     //Player turn moves
     int playerTurn(int& result, const std::string playerTurnCommand, int& help);
@@ -115,24 +116,24 @@ public:
     void setPlayerStartingNextRound(int playerNo);
 
 private:
+    GameEngineCallback* gec;
     std::vector<std::shared_ptr<Player>> players;
-    int noOfPlayers;
-    int noOfCentralFactories;
-    int noOfNormalFactories;
-    bool use2ndFactory;
     std::vector<std::shared_ptr<Factory>> factories;
     LinkedList* bag;
     LinkedList* boxLid;
+    bool outOfTiles;
+    int noOfPlayers;
+    int noOfCentralFactories;
+    int noOfNormalFactories;
     int currentTurn;
     int playerStartingNextRound;
-    GameEngineCallback* gec;
     int seed;
-    std::string gameInfo[36];
     
     // Game mode
     bool standardMode;
     bool greyMode;
     bool sixBySixMode;
+    bool use2ndFactory;
 
     // For testing purposes
     bool testing;

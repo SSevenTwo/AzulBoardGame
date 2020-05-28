@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 
+#define LEGACY_SAVE 36
+
 class GameEngine;
 class GameEngineIO {
 public:
@@ -27,6 +29,7 @@ public:
     void determineGameMode(std::string gameMode);
     void determineNoOfPlayers(std::string playerNo);
     void determineNoOfCentralFactories(std::string noOfCentralFactories);
+    void setLegacySaveSettings();
     
 private:
     GameEngine* gameEngine;
@@ -35,6 +38,7 @@ private:
     bool greyMode;
     bool sixBySixMode;
     bool standard;
+    bool legacySave;
     unsigned int noOfPlayers;
     unsigned int noOfFactories;
     unsigned int noOfStorageRows;
