@@ -24,8 +24,6 @@ void Menu::printWelcome() {
 }
 
 void Menu::runMenu() {
-
-    std::cout << "\033[1;31mbold red text\033[0m\n" << std::endl;
     std::cout << "----" << std::endl;
     std::cout << "Menu" << std::endl;
     std::cout << "----" << std::endl;
@@ -47,59 +45,14 @@ bool Menu::runSelection(unsigned const int selection) {
     Input input;
 
     if (selection == OPTIONS::NEW_GAME) {
-
-
-        std::cout << "Please enter the number of players:" << std::endl;
-        std::string noOfPlayerAsString = input.getString();
-        int noOfPlayer = 0;
-        if (input.inputIsInt(noOfPlayerAsString)) {
-            std::stringstream sstream (noOfPlayerAsString);
-            noOfPlayer = 0;
-            sstream >> noOfPlayer;
-            if(noOfPlayer <= 0 || noOfPlayer >4){
-                throw "Please enter a number from 1-4.";
-            }
-        } else {
-            throw "Please enter a number from 1-4.";
-        }
-
         std::string playerNames[4] = {};
-
-        for(int i = 0; i < noOfPlayer; ++i){
-            std::cout << "Please enter player "<< i+1 <<"'s name:" << std::endl;
-            playerNames[i] = input.getString();
-
-        }
-        
-        for(int i = 0; i < noOfPlayer; ++i){
-            for(int j = i + 1; j < noOfPlayer; ++j){
-                if (playerNames[i] == playerNames[j]) {
-                    throw "Players cannot have the same name.";
-                }
-            }
-        }
-
-        std::cout << "Please enter the number of central factories (1-2):" << std::endl;
-        std::string noOfFactoriesAsString = input.getString();
+        int noOfPlayers = 0;
         int noOfFactories = 0;
-        if (input.inputIsInt(noOfFactoriesAsString)) {
-            std::stringstream sstream (noOfFactoriesAsString);
-            noOfFactories = 0;
-            sstream >> noOfFactories;
-            if(noOfFactories <= 0 || noOfFactories >2){
-                throw "Please enter a number from 1-2.";
-            }
-        } else {
-            throw "Please enter a number from 1-2.";
-        }
-
-        for(int i = 0; i < noOfPlayer; ++i){
-            std::cout << "Welcome " << playerNames[i] << "!" << std::endl;
-        }
+        determinePlayersAndFactories(playerNames,noOfPlayers,noOfFactories);
 
         std::string gameMode = "standard";
 
-        this->gameEngine->newGame(playerNames, noOfPlayer, noOfFactories, gameMode);
+        this->gameEngine->newGame(playerNames, noOfPlayers, noOfFactories, gameMode);
         this->gameEngine->gameplayLoop(eof, continueMenuLoop);
         
 
@@ -216,7 +169,6 @@ bool Menu::runSelection(unsigned const int selection) {
         GameEngineIO* gameEngineIO = new GameEngineIO(this->gameEngine);
         try{
             gameEngineIO->loadGame(file);
-            // this->gameEngine->loadGame(file);
 
             std::cout << "Azul game successfully loaded" << std::endl;
 
@@ -247,4 +199,53 @@ void Menu::printCredits(const std::string name, const std::string studentID) {
     std::cout << "Email: " << studentID << "@student.rmit.edu.au" << std::endl << std::endl;
 }
 
+void Menu::determinePlayersAndFactories(std::string playerNames[], int& noOfPlayer, int& noOfFactories){
+    std::cout << "\033[1;38;5;33mPlease enter the number of players:\033[0m" << std::endl;
+    std::string noOfPlayerAsString = input.getString();
+    if (input.inputIsInt(noOfPlayerAsString)) {
+        std::stringstream sstream (noOfPlayerAsString);
+        noOfPlayer = 0;
+        sstream >> noOfPlayer;
+        if(noOfPlayer <= 0 || noOfPlayer >4){
+            throw "\033[1;31mPlease enter a number from 1-4.\033[0m";
+        }
+    } else {
+        throw "\033[1;31mPlease enter a number from 1-4.\033[0m";
+    }
 
+    for(int i = 0; i < noOfPlayer; ++i){
+        std::cout << "\033[1;38;5;33mPlease enter player "<< i+1 <<"'s name:\033[0m" << std::endl;
+        playerNames[i] = input.getString();
+
+    }
+    
+    for(int i = 0; i < noOfPlayer; ++i){
+        for(int j = i + 1; j < noOfPlayer; ++j){
+            if (playerNames[i] == playerNames[j]) {
+                throw "\033[1;31mPlayers cannot have the same name.\033[0m";
+            }
+        }
+    }
+
+    std::cout << "\033[1;38;5;33mPlease enter the number of central factories (1-2):\033[0m" << std::endl;
+    std::string noOfFactoriesAsString = input.getString();
+    if (input.inputIsInt(noOfFactoriesAsString)) {
+        std::stringstream sstream (noOfFactoriesAsString);
+        noOfFactories = 0;
+        sstream >> noOfFactories;
+        if(noOfFactories <= 0 || noOfFactories >2){
+            throw "\033[1;31mPlease enter a number from 1-2.\033[0m";
+        }
+    } else {
+        throw "\033[1;31mPlease enter a number from 1-2.\033[0m";
+    }
+
+    std::cout << "\033[1;33mWelcome ";
+    for(int i = 0; i < noOfPlayer; ++i){
+        if(i == noOfPlayer-1)
+            std::cout << "and " << playerNames[i];
+        else
+            std::cout << playerNames[i] << ", ";
+    }
+    std::cout << "!\033[0m" << std::endl;
+}

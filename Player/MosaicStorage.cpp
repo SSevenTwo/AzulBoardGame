@@ -119,8 +119,6 @@ bool MosaicStorage::isValidGreyAdd(Type type, unsigned const int row){
 bool MosaicStorage::isValidSixBySixAdd(Type type, unsigned int row){
     bool valid = false;
     int column = mosaic->getColourColumn(row, type);
-    std::cout<<"COLUMN NAME" <<column<<std::endl;
-    std::cout<<"COLOR TYPE" <<type<<std::endl;
     Type rowType = getRowType(row);
     
     // Row type is the same or empty
@@ -282,17 +280,17 @@ std::string MosaicStorage::rowToString(int index){
     if(sixBySixMode){
         noOfRows = 6;
     }
-    std::string string = std::to_string(index+1) + ": ";
+    std::string string = std::to_string(index+1) + ":";
     for(int j = 0; j<noOfRows-(index+1);j++){
-            string+= "  ";
+            string+= "   ";
     }
     for(int i = index; i>=0; --i){
     
         if(grid[index][i] != nullptr){
-            string += grid[index][i]->getColourType();
-            string += " ";
+            string += this->mosaic->colourTileInConsole(grid[index][i]->getColourType());
+            //string += " ";
         }else{
-            string += ". ";
+            string += " . ";
         }
        
     }

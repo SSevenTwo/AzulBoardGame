@@ -31,6 +31,8 @@ public:
     void printWelcome();
 
     bool runSelection(unsigned const int selection);
+    
+    void determinePlayersAndFactories(std::string playerNames[], int& noOfPlayer, int& noOfFactories);
 
     void printCredits(const std::string name, const std::string studentID);
 

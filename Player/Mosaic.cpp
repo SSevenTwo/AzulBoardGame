@@ -245,10 +245,9 @@ std::string Mosaic::rowToString(int index){
 
     for(unsigned int i = 0; i< maxNoCols; ++i){
         if(this->grid[index][i] != nullptr){
-            string += grid[index][i]->getColourType();
-            string += " ";
+            string += colourTileInConsole(grid[index][i]->getColourType());
         }else{
-            string += ". ";
+            string += "\033[1;48;5;239m . \033[0m";
         }
        
     }
@@ -256,15 +255,35 @@ std::string Mosaic::rowToString(int index){
     return string;
 }
 
+std::string Mosaic::colourTileInConsole(char type){
+    std::string toReturn = "";
+
+    if(type == 'R')
+        toReturn = "\033[1;41m R \033[0m";
+    if(type == 'Y')
+        toReturn = "\033[1;30;43m Y \033[0m";
+    if(type == 'B')
+        toReturn = "\033[1;48;5;18m B \033[0m";
+    if(type == 'L')
+        toReturn = "\033[1;48;5;27m L \033[0m";
+    if(type == 'U')
+        toReturn = "\033[1;40m U \033[0m";
+    if(type == 'O')
+        toReturn = "\033[1;48;5;208m O \033[0m";
+    
+    return toReturn;
+}
+
 std::string Mosaic::templateRowToString(int index) {
     std::string string = "";
 
     for(unsigned int i = 0; i< maxNoCols; ++i){
         if(sixBySixMode)
-            string+= colourGridFor6x6[index][i];
+            string+= colourTileInConsole(colourGridFor6x6[index][i]);
+        else if(greyMode)
+            string += "";
         else
-            string += colourGrid[index][i];
-        string += " ";
+            string += colourTileInConsole(colourGrid[index][i]);
        
     }
 
@@ -289,7 +308,6 @@ std::string Mosaic::rowToSave(int index){
 
 int Mosaic::calculateEndGamePoints() {
     int endGamePoints = 0;
-
 
     endGamePoints += 2*numFullRows() + 7*numFullCols() + 10*noOfFiveColours();
     return endGamePoints;

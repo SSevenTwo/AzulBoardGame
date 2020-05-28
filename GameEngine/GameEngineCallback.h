@@ -12,7 +12,13 @@ public:
     ~GameEngineCallback();
 
     // Prints board of a player
-    void playerBoardUpdate(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, bool sixBySix);
+    void playerBoardUpdate(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, bool sixBySix, bool greyMode);
+    void playerBoardsFor4Players(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, 
+        bool sixBySix, std::string& outputString);
+    void playerBoardsFor3Players(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, 
+        bool sixBySix, std::string& outputString);
+    void playerBoardsFor2Players(std::vector<std::shared_ptr<Player>> players, int noOfPlayers, 
+        bool sixBySix, bool greyMode, std::string& outputString);
 
     // Prints whose turn is it now
     void playerTurnUpdate(std::string playerName);
@@ -28,9 +34,19 @@ public:
 
     // Prints board components (factories)
     void boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory);
+    void printComponentsFor4Players(std::vector<std::shared_ptr<Factory>> factories, 
+        int noOfCentralFactories, std::string& outputString);
+    void printComponentsFor3Players(std::vector<std::shared_ptr<Factory>> factories, 
+        int noOfCentralFactories, std::string& outputString);
+    void printComponentsFor2Players(std::vector<std::shared_ptr<Factory>> factories, 
+        int noOfCentralFactories, std::string& outputString);
 
     // General prompting of user
     void promptUser(std::string prompt);
+
+    // Utilities
+    void appendFactory(std::vector<std::shared_ptr<Factory>> factories, int index, std::string& outputString);
+    std::string colouredLetters(char type);
 
 private:
 

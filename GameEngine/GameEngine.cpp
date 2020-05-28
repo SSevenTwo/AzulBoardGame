@@ -199,9 +199,9 @@ void GameEngine::determineNoOfPlayersAndFactories(const unsigned int noOfPlayers
     }
 }
 
-int GameEngine::playerTurn(std::string playerTurnCommand){
+int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help){
     Input input;
-    int toReturn = 1;
+    result = Error_Message::SUCCESS;
     std::stringstream commandLine(playerTurnCommand);
     std::string commandPart;
 
@@ -216,7 +216,7 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
     }
 
     if(use2ndFactory && !normalFactoriesAreEmpty() && 
-        (commands[1] != "0" && commands[1] != "1" && commands[0] != "save")){
+        (commands[1] != "0" && commands[1] != "1" && commands[0] != "save" && commands[0] != "help")){
         gec->promptUser("Which central factory do you want to discard to?");
         commands[4] = input.getString();
     }else{
@@ -226,7 +226,11 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
     if (!this->use2ndFactory)
         commands[4] = "0";
 
-    if(commands[0] == "turn"){
+    if(commands[4] == "help"){
+        result = Error_Message::HELP;
+        help = 2;
+    }
+    else if(commands[0] == "turn"){
 
         int factoryNo;
         Type tileType;
@@ -238,46 +242,49 @@ int GameEngine::playerTurn(std::string playerTurnCommand){
 
             if(factoryNo == 0 || (use2ndFactory && (factoryNo == 0 || factoryNo == 1))){
                 if(centralFactoryOnlyHasFirstTile(centralFactoryNo)){
-                    toReturn = Error_Message::NO_TILES_IN_CENTRAL;
+                    result = Error_Message::NO_TILES_IN_CENTRAL;
                 }
             }
 
             if(!tileExistsInFactory(tileType, factoryNo)){
-                toReturn = Error_Message::COLOUR_NOT_IN_FACTORY;
+                result = Error_Message::COLOUR_NOT_IN_FACTORY;
             }
 
             //continue if the aforementioned checks pass
-            if(toReturn == Error_Message::SUCCESS){
+            if(result == Error_Message::SUCCESS){
 
                 if (commands[3] != "B") {
                     if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,
                         centralFactoryNo,(storageRow-1),tileType, false)) {
-                        toReturn = Error_Message::SUCCESS;
+                        result = Error_Message::SUCCESS;
                     } else {
-                        toReturn = Error_Message::INVALID_MOVE;
+                        result = Error_Message::INVALID_MOVE;
                     }
                 } else {
                     if (moveTilesFromFactory(this->getCurrentPlayer(),factoryNo,
                         centralFactoryNo,(storageRow-1),tileType, true)) {
-                        toReturn = Error_Message::SUCCESS;
+                        result = Error_Message::SUCCESS;
                     } else {
-                        toReturn = Error_Message::INVALID_MOVE;
+                        result = Error_Message::INVALID_MOVE;
                     }
                 }
             }  
         } else{
-            toReturn = Error_Message::INVALID_COMMAND;
+            result = Error_Message::INVALID_COMMAND;
         }
     } else if (commands[0] == "save") {
         GameEngineIO* geIO = new GameEngineIO(this);
         geIO->saveGame(commands[1], getGameModeAsString(), this->noOfPlayers);
-        toReturn = Error_Message::SAVED;
+        result = Error_Message::SAVED;
         delete geIO;
+    }else if (commands[0] == "help") {
+        result = Error_Message::HELP;
+        help = 1;
     } else {
-        toReturn = Error_Message::INVALID_COMMAND;
+        result = Error_Message::INVALID_COMMAND;
     }
 
-    return toReturn;
+    return result;
 }
 
 bool GameEngine::commandsAreValid(std::string commands[], 
@@ -523,7 +530,7 @@ void GameEngine::movePlayerTilesToMosaic(){
 
 void GameEngine::movePlayerTilesToMosaicForGreyMode(){
     int maxNoStorageRows = 5;
-    gec->playerBoardUpdate(players, noOfPlayers, sixBySixMode);
+    gec->playerBoardUpdate(players, noOfPlayers, sixBySixMode, greyMode);
     for(int i = 0; i<noOfPlayers; ++i){
         std::shared_ptr<MosaicStorage> playerMosaicStorage = this->players[i]->getMosaicStorage();
         for(int row = 0; row<maxNoStorageRows; ++row){
@@ -531,11 +538,11 @@ void GameEngine::movePlayerTilesToMosaicForGreyMode(){
                 bool success = false;
                 while(success == false){
                     success = askForMosaicRow(playerMosaicStorage, i, row);
-                    gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode);
+                    gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode, greyMode);
 
                     if(!success){
                         std::string output = "Error: Please enter a number from 1-5 or B.\n";
-                        output+= "Remember: Columns and Rows can only have 1 of a color.\n";
+                        output+= "Remember: Columns and Rows can only have 1 of each color.\n";
                         gec->promptUser(output);
                     }
                 }
@@ -553,7 +560,7 @@ bool GameEngine::askForMosaicRow(std::shared_ptr<MosaicStorage> playerMosaicStor
     gec->promptUser(this->players[playerNo]->getName() + "'s turn to move from Storage to Mosaic.");
     gec->promptUser("Where do you want to move row " 
             + std::to_string(row+1) 
-            + " tiles to? (Enter the column index)");
+            + " tiles to? (Enter the column index or B)");
     std::string colAsString = input.getString();
     if (input.inputIsInt(colAsString)) {
         std::stringstream sstream (colAsString);
@@ -561,7 +568,9 @@ bool GameEngine::askForMosaicRow(std::shared_ptr<MosaicStorage> playerMosaicStor
         if(col >= 1 && col <= 5)
             success = playerMosaicStorage->greyModeEndOfRoundMove(row,col-1);
     }else if( colAsString == "B"){
-            success = playerMosaicStorage->greyModeEndOfRoundMove(row,-1);
+        success = playerMosaicStorage->greyModeEndOfRoundMove(row,-1);
+    }else if( colAsString == "help"){
+        gec->promptUser(interpretPlayerTurn(Error_Message::HELP, 3));
     }
 
     return success;        
@@ -777,7 +786,7 @@ void GameEngine::addTilesByColourToBag(Type type, std::shared_ptr<Tile> bagToShu
 * 4: colour not in factory
 * 5: invalid moves
 */
-std::string GameEngine::interpretPlayerTurn(const int result){
+std::string GameEngine::interpretPlayerTurn(const int result, int helpNo){
     std::string toReturn;
     if(result == Error_Message::INVALID_COMMAND)
         toReturn = "Error: Invalid Command.\n";
@@ -791,8 +800,47 @@ std::string GameEngine::interpretPlayerTurn(const int result){
         toReturn = "Error: The colour specified is not in this factory.\n";
     if(result == Error_Message::INVALID_MOVE)
         toReturn = "Error: The move you are trying to make is invalid.\n";
+    if(result == Error_Message::HELP)
+        toReturn = help(helpNo);
 
     return toReturn;
+}
+
+// 1 = normal turn
+// 2 = choose central factory
+// 3 = choose mosaic column for grey mode
+std::string GameEngine::help(int help){
+    std::string toReturn = "";
+    if(help == 1){
+        toReturn = "Enter a command in the following format: turn <factory number>";        
+        toReturn+= " <tile letter> <storage row number or broken tiles (B)> \nExample: turn 3 L 1";
+    }
+    if(help == 2){
+        toReturn = "Enter the number of the central factory you wish to move the other tiles to: <central factory no>";        
+        toReturn+= "\nMust be either 0 or 1.";
+    }
+    if(help == 3){
+        toReturn = "Enter the number of column (1-5) in the mosaic that you wish to move the colored tile to: <mosaic column number>";        
+        toReturn+= "\nYou can also move the tile to your broken tiles.";        
+        toReturn+= "\nOnly 1 tile will be moved to the mosaic. The rest is discarded.";
+        toReturn+= "\nNote: You can only have one of any colour in each column and row.";
+        toReturn+= "\nTherefore if you are stuck, you must move to the broken tiles.\n";
+    }
+    return toReturn;
+}
+
+
+void GameEngine::getPlayerInputInLoop(int& result, int& help){
+    Input input;
+    std::string playerCommand = input.getString();
+    playerTurn(result, playerCommand, help);
+    if(result == Error_Message::HELP)
+        gec->playerTurnResult(interpretPlayerTurn(result, help));
+    else 
+        gec->playerTurnResult(interpretPlayerTurn(result, help));
+    if(result != Error_Message::SUCCESS){
+        gec->playerTurnUpdate(this->players[currentTurn]->getName());
+    }
 }
 
 //loop enables the game to keep playing until someone wins or someone quits
@@ -804,16 +852,13 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
 
             //output relevant information to players
             gec->boardComponentUpdate(factories, use2ndFactory);
-            gec->playerBoardUpdate(this->players, noOfPlayers, sixBySixMode);
+            gec->playerBoardUpdate(this->players, noOfPlayers, sixBySixMode, greyMode);
             gec->playerTurnUpdate(this->players[currentTurn]->getName());
 
-            std::string playerCommand = "";
-            std::string centralCommandToDiscardTo = "";
             int turnResult = 0;
-            while(!endOfCommands && !std::cin.eof() && (turnResult != 1)){
-                playerCommand = input.getString();
-                turnResult = playerTurn(playerCommand);
-                gec->playerTurnResult(interpretPlayerTurn(turnResult));
+            int help = 0;
+            while(!endOfCommands && !std::cin.eof() && (turnResult != Error_Message::SUCCESS)){
+                getPlayerInputInLoop(turnResult,help);
             }
             // This only runs for io redirection; program automatically exits if the eof is reached
             if(std::cin.eof()){
@@ -839,7 +884,7 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
 
     //loop breaks so we can finalise scores and decide on winner
     if (winConditionMet()) {
-        gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode);
+        gec->playerBoardUpdate(this->players, noOfPlayers,sixBySixMode, greyMode);
         calculateEndGamePoints();
 
         // When testing, we save the game before it ends to see the end of game save file

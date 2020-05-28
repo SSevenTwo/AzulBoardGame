@@ -22,7 +22,8 @@ enum Error_Message{
     SAVED,
     NO_TILES_IN_CENTRAL,
     COLOUR_NOT_IN_FACTORY,
-    INVALID_MOVE
+    INVALID_MOVE,
+    HELP
 };
 
 class GameEngineIO;
@@ -49,14 +50,16 @@ public:
     void endOfRoundPreparations();
 
     //Player turn moves
-    int playerTurn(const std::string playerTurnCommand);
-    std::string interpretPlayerTurn(const int result);
+    int playerTurn(int& result, const std::string playerTurnCommand, int& help);
+    std::string interpretPlayerTurn(const int result, int helpNo);
     void swapCurrentTurn();
     void calculatePointsPerRound();
     void calculateEndGamePoints();
     void resetGame();
+    std::string help(int help);
 
     //Player input validation
+    void getPlayerInputInLoop(int& result, int& help);
     bool checkInput();
     bool commandsAreValid(std::string commands[], 
         int& factoryNo, Type& tileType, int& storageRow, int& centralFactoryNo);

@@ -45,6 +45,7 @@ public:
     std::string templateRowToString(int index);
     std::string rowToString(int index);
     std::string rowToSave(int index);
+    std::string colourTileInConsole(char type);
    
 private:
     std::shared_ptr<Tile>** grid;
@@ -128,6 +129,7 @@ private:
         {'r', 'u', 'l', 'b', 'y'} ,
         {'y', 'r', 'u', 'l', 'b'} ,
     };
+
 };
 
 #endif // MOSAIC_H
