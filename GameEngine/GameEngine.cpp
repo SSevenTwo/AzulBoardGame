@@ -892,7 +892,7 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
     while(!endOfCommands && !std::cin.eof() && !winConditionMet()){
         while(!endOfCommands && !endOfRoundConditionMet()){
             //output relevant information to players
-            gec->boardComponentUpdate(factories, use2ndFactory);
+            gec->boardComponentUpdate(factories, use2ndFactory, sixBySixMode);
             gec->playerBoardUpdate(this->players, noOfPlayers, sixBySixMode, greyMode);
             gec->playerTurnUpdate(this->players[currentTurn]->getName());
 

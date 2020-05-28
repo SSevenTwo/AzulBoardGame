@@ -87,7 +87,8 @@ void GameEngineCallback::playerEndOfGameResult(std::vector<std::shared_ptr<Playe
 
 }
 
-void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory) {
+void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, 
+    bool use2ndFactory, bool sixBySix) {
 
     std::cout<< "\033[1;38;5;208m--------------------Next Turn------------------\n\033[0m" << std::endl;
     std::string outputString = "";
@@ -107,18 +108,22 @@ void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factor
     }
    
     if(factories.size() > 9)
-        printComponentsFor4Players(factories,noOfCenterFactories,outputString);
+        printComponentsFor4Players(factories,noOfCenterFactories,outputString,sixBySix);
     else if(factories.size() == 8 || factories.size() == 9)
-        printComponentsFor3Players(factories,noOfCenterFactories,outputString);
+        printComponentsFor3Players(factories,noOfCenterFactories,outputString,sixBySix);
     else
-        printComponentsFor2Players(factories,noOfCenterFactories,outputString);
+        printComponentsFor2Players(factories,noOfCenterFactories,outputString,sixBySix);
 
     std::cout << outputString << std::endl;
 }
 
 void GameEngineCallback::appendFactory(std::vector<std::shared_ptr<Factory>> factories, 
-    int index, std::string& outputString){
+    int index, std::string& outputString, bool sixBySix){
 
+    int noOfTiles = 4;
+    if(sixBySix)
+        noOfTiles = 5;
+    
     std::vector<std::shared_ptr<Tile>> tiles = factories[index]->getAllTiles();
         outputString += "\033[1mFactory " + std::to_string(index) += ": \033[0m";
         int size = tiles.size();
@@ -126,69 +131,72 @@ void GameEngineCallback::appendFactory(std::vector<std::shared_ptr<Factory>> fac
             outputString += (colouredLetters(tiles[j]->getColourType()));
         }
 
-        for(int i = 0; i<(4-size); ++i){
+        for(int i = 0; i<(noOfTiles-size); ++i){
             outputString += " . ";
         }
-            
-            
 }
 
 
 void GameEngineCallback::printComponentsFor4Players(std::vector<std::shared_ptr<Factory>> factories, 
-    int noOfCentralFactories, std::string& outputString){
+    int noOfCentralFactories, std::string& outputString, bool sixBySix){
 
     int index = noOfCentralFactories;
-    appendFactory(factories, index, outputString);
+    appendFactory(factories, index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+5), outputString);
+    appendFactory(factories, (index+5), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, ++index, outputString);
+    appendFactory(factories, ++index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+5), outputString);
+    appendFactory(factories, (index+5), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, ++index, outputString);
+    appendFactory(factories, ++index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+5), outputString);
+    appendFactory(factories, (index+5), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, ++index, outputString);
+    appendFactory(factories, ++index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+5), outputString);
+    appendFactory(factories, (index+5), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, (++index), outputString);
+    appendFactory(factories, (++index), outputString,sixBySix);
     outputString += "\n";
 
 }
 
 void GameEngineCallback::printComponentsFor3Players(std::vector<std::shared_ptr<Factory>> factories, 
-    int noOfCentralFactories, std::string& outputString){
+    int noOfCentralFactories, std::string& outputString, bool sixBySix){
 
     int index = noOfCentralFactories;
-    appendFactory(factories, index, outputString);
+    appendFactory(factories, index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+4), outputString);
+    appendFactory(factories, (index+4), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, ++index, outputString);
+    appendFactory(factories, ++index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+4), outputString);
+    appendFactory(factories, (index+4), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, ++index, outputString);
+    appendFactory(factories, ++index, outputString,sixBySix);
     outputString += "\t\t";
-    appendFactory(factories, (index+4), outputString);
+    appendFactory(factories, (index+4), outputString,sixBySix);
     outputString += "\n";
 
-    appendFactory(factories, (++index), outputString);
+    appendFactory(factories, (++index), outputString,sixBySix);
     outputString += "\n";
 
 }
 
 void GameEngineCallback::printComponentsFor2Players(std::vector<std::shared_ptr<Factory>> factories, 
-    int noOfCentralFactories, std::string& outputString){
+    int noOfCentralFactories, std::string& outputString, bool sixBySix){
+
+    int noOfTiles = 4;
+    if(sixBySix)
+        noOfTiles = 5;
+    
 
     for(unsigned int i = (noOfCentralFactories); i < factories.size(); i++){
         std::vector<std::shared_ptr<Tile>> tiles = factories[i]->getAllTiles();
@@ -196,7 +204,10 @@ void GameEngineCallback::printComponentsFor2Players(std::vector<std::shared_ptr<
         int size = tiles.size();
         for(int j = 0; j < size; ++j){
             outputString += colouredLetters(tiles[j]->getColourType());
-            //outputString += " ";
+        }
+
+        for(int j = 0; j<(noOfTiles-size); ++j){
+            outputString += " . ";
         }
 
         outputString += "\n";

@@ -3,9 +3,10 @@
 
 #include "../../Components/headers/Tile.h"
 
-#define MAX_ROWS        5
-#define MAX_COLS        5
-#define MAX_NO_TILES    5
+#define MAX_ROWS_STANDARD       5
+#define MAX_COLS_STANDARD       5
+#define MAX_ROWS_6X6            6
+#define MAX_COLS_6X6            6
 
 class Mosaic{
 public:
@@ -71,7 +72,7 @@ private:
      * Col 5 = Black
      */
 
-    int colourColumns[MAX_ROWS][MAX_COLS] = {
+    int colourColumns[MAX_ROWS_STANDARD][MAX_COLS_STANDARD] = {
         {2, 1, 0, 4, 3} ,
         {3, 2, 1, 0, 4} ,
         {4, 3, 2, 1, 0} ,
@@ -87,7 +88,7 @@ private:
      * Col 4 = Black
      * Col 5 = Orange
      */
-    int colourColumnsFor6x6[6][6] = {
+    int colourColumnsFor6x6[MAX_ROWS_6X6][MAX_COLS_6X6] = {
         {2, 1, 0, 4, 3, 5} ,
         {3, 2, 1, 5, 4, 0} ,
         {4, 3, 2, 0, 5, 1} ,
@@ -96,7 +97,7 @@ private:
         {1, 0, 5, 3, 2, 4} ,
     };
 
-    char colourGrid[MAX_ROWS][MAX_COLS] = {
+    char colourGrid[MAX_ROWS_STANDARD][MAX_COLS_STANDARD] = {
         {'B', 'Y', 'R', 'U', 'L'} ,
         {'L', 'B', 'Y', 'R', 'U'} ,
         {'U', 'L', 'B', 'Y', 'R'} ,
@@ -113,7 +114,7 @@ private:
         {'Y', 'R', 'U', 'L', 'O' ,'B'}
     };
 
-    const char toSaveColourGridFor6x6[6][6] = {
+    const char toSaveColourGridFor6x6[MAX_ROWS_6X6][MAX_COLS_6X6] = {
         {'b', 'y', 'r', 'u', 'l', 'o'} ,
         {'o', 'b', 'y', 'r', 'u', 'l'} ,
         {'l', 'o', 'b', 'y', 'r', 'u'} ,
@@ -122,7 +123,7 @@ private:
         {'y', 'r', 'u', 'l', 'o' ,'b'}
     };
 
-    char toSavecolourGrid[MAX_ROWS][MAX_COLS] = {
+    char toSavecolourGrid[MAX_ROWS_STANDARD][MAX_COLS_STANDARD] = {
         {'b', 'y', 'r', 'u', 'l'} ,
         {'l', 'b', 'y', 'r', 'u'} ,
         {'u', 'l', 'b', 'y', 'r'} ,

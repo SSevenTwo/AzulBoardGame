@@ -266,7 +266,6 @@ void GameEngineIO::loadBrokenTiles(){
                 std::shared_ptr<Player> player = gameEngine->getPlayer(playerNum);
                 if(tileType == Type::FIRST_PLAYER){
                     gameEngine->setPlayerStartingNextRound(playerNum);
-                    std::cout << "PICCOLOOOOO" << std::endl;
                 }
                 player->getMosaicStorage()->getBrokenTiles()->addTile(tile);
             } else {

@@ -33,19 +33,20 @@ public:
     void playerEndOfGameResult(std::vector<std::shared_ptr<Player>> players, int noOfPlayers);
 
     // Prints board components (factories)
-    void boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory);
+    void boardComponentUpdate(std::vector<std::shared_ptr<Factory>> factories, bool use2ndFactory, bool sixBySix);
     void printComponentsFor4Players(std::vector<std::shared_ptr<Factory>> factories, 
-        int noOfCentralFactories, std::string& outputString);
+        int noOfCentralFactories, std::string& outputString, bool sixBySix);
     void printComponentsFor3Players(std::vector<std::shared_ptr<Factory>> factories, 
-        int noOfCentralFactories, std::string& outputString);
+        int noOfCentralFactories, std::string& outputString, bool sixBySix);
     void printComponentsFor2Players(std::vector<std::shared_ptr<Factory>> factories, 
-        int noOfCentralFactories, std::string& outputString);
+        int noOfCentralFactories, std::string& outputString, bool sixBySix);
 
     // General prompting of user
     void promptUser(std::string prompt);
 
     // Utilities
-    void appendFactory(std::vector<std::shared_ptr<Factory>> factories, int index, std::string& outputString);
+    void appendFactory(std::vector<std::shared_ptr<Factory>> factories, 
+        int index, std::string& outputString, bool sixBySix);
     std::string colouredLetters(char type);
 
 private:
