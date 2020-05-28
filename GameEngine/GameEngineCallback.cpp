@@ -102,7 +102,6 @@ void GameEngineCallback::boardComponentUpdate(std::vector<std::shared_ptr<Factor
         int size = tilesOfCenter.size();
         for(int j = 0; j < size; ++j){
             outputString += colouredLetters(tilesOfCenter[j]->getColourType());
-            outputString += " ";
         }
         outputString += "\n";
     }
@@ -125,8 +124,13 @@ void GameEngineCallback::appendFactory(std::vector<std::shared_ptr<Factory>> fac
         int size = tiles.size();
         for(int j = 0; j < size; ++j){
             outputString += (colouredLetters(tiles[j]->getColourType()));
-            outputString += " ";
         }
+
+        for(int i = 0; i<(4-size); ++i){
+            outputString += " . ";
+        }
+            
+            
 }
 
 

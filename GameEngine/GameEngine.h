@@ -137,6 +137,7 @@ private:
 
     // For testing purposes
     bool testing;
+    std::vector<std::string> commands;
 
 };
 

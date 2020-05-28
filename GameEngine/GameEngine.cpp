@@ -268,6 +268,16 @@ int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help
                         result = Error_Message::INVALID_MOVE;
                     }
                 }
+
+                // FOR TESTING PURPOSES REMOVE LATER
+                std::string commando = commands[0] + " " + commands[1] + " " + commands[2] + " " + commands[3];
+                this->commands.push_back(commando);
+                if(use2ndFactory && !normalFactoriesAreEmpty() && 
+                    (commands[1] != "0" && commands[1] != "1" && commands[0] != "save" && commands[0] != "help")){
+                    commando = commands[4]; 
+                }
+                this->commands.push_back(commando);
+                // FOR TESTING PURPOSES REMOVE LATER
             }  
         } else{
             result = Error_Message::INVALID_COMMAND;
@@ -277,6 +287,13 @@ int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help
         geIO->saveGame(commands[1], getGameModeAsString(), this->noOfPlayers);
         result = Error_Message::SAVED;
         delete geIO;
+
+                // FOR TESTING PURPOSES REMOVE LATER
+                for(unsigned int i = 0; i < this->commands.size(); ++i){
+                    std::cout<< this->commands[i] << std::endl;
+                }
+
+
     }else if (commands[0] == "help") {
         result = Error_Message::HELP;
         help = 1;
@@ -575,6 +592,12 @@ bool GameEngine::askForMosaicRow(std::shared_ptr<MosaicStorage> playerMosaicStor
     }else if( colAsString == "help"){
         gec->promptUser(interpretPlayerTurn(Error_Message::HELP, 3));
     }
+
+    // FOR TESTING PURPOSES REMOVE LATER
+    if(success){
+        this->commands.push_back(colAsString);
+    }
+    // FOR TESTING PURPOSES REMOVE LATER
 
     return success;        
 }
@@ -900,6 +923,10 @@ void GameEngine::endOfGamePreparations(){
         GameEngineIO* geIO = new GameEngineIO(this);
         geIO->saveGame("actualoutcome.save",getGameModeAsString(),noOfPlayers);
         delete geIO;
+        // FOR TESTING PURPOSES REMOVE LATER
+                for(unsigned int i = 0; i < this->commands.size(); ++i){
+                    std::cout<< this->commands[i] << std::endl;
+                }
     }
 
     resetGame();

@@ -1,6 +1,6 @@
-for i in {1..17}
+for i in {1..18}
 do
-    if((${i} == 6 || ${i} == 7 || ${i} == 8 || ${i} == 9))
+    if((${i} == 6 || ${i} == 7 || ${i} == 8 || ${i} == 9 || ${i} == 18))
     then
         ./assign2 -s 2 <${i}commands.in >consoleOutput.txt
         diff ${i}expectedoutcome.save actualoutcome.save
