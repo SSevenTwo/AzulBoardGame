@@ -54,13 +54,10 @@ void GameEngineIO::loadGame(std::string fileName) {
     loadStorageArea();
     loadBrokenTiles();
 
-    loadBag();
     loadLid();
+    loadBag();
     loadSeed();
 
-    if(readError){
-        throw "There was an error reading the file.";
-    }
 
 }
 
@@ -133,7 +130,7 @@ void GameEngineIO::loadPlayers(){
     }
 
     for(unsigned int i = 0; i < noOfPlayers; ++i){
-        this->gameEngine->setPlayer(gameInfo[index],i+1,gameInfo[0]);
+        this->gameEngine->setPlayer(gameInfo[index],i,gameInfo[0]);
         ++this->index;
     }
 
@@ -149,9 +146,18 @@ void GameEngineIO::loadPlayers(){
 
     // Load Next Turn info into game
     std::stringstream currentTurnAsString(gameInfo[index]);
-    int currentTurn;
-    currentTurnAsString >> currentTurn;
-    gameEngine->setCurrentTurn(currentTurn);
+    if(legacySave){
+        std::vector<std::shared_ptr<Player>> players = gameEngine->getPlayers();
+        int size = players.size();
+        for(int i = 0; i < size; ++i){
+            if(players[i]->getName() == gameInfo[index])
+                gameEngine->setCurrentTurn(i);
+        }
+    }else{
+        int currentTurn;
+        currentTurnAsString >> currentTurn;
+        gameEngine->setCurrentTurn(currentTurn);
+    }
     ++this->index;
 }
 
@@ -183,15 +189,16 @@ void GameEngineIO::loadFactories(){
 
 void GameEngineIO::loadMosaics(){
     // Load Player 1 and 2 Mosaics into game 
+
     for (unsigned int playerNum = 0; playerNum < this->noOfPlayers; ++playerNum) {
 
         for (unsigned int row = 0; row < noOfStorageRows; ++row) {
 
-            std::stringstream playerMosaicStream(gameInfo[index]);
+            std::stringstream playerMosaicStream(gameInfo[this->index]);
             char toAdd;
             playerMosaicStream >> toAdd;
 
-            for (unsigned int col = 0; col < noOfTilesPerFactory; ++col) {
+            for (unsigned int col = 0; col < noOfStorageRows; ++col) {
                 if (playerMosaicStream.good()) {
                     Type tileType = Type::NONE;
                     if (gameEngine->changeType(tileType, toAdd)) {
@@ -205,7 +212,7 @@ void GameEngineIO::loadMosaics(){
                     playerMosaicStream >> toAdd;
                 }
             }
-            ++index;
+            ++this->index;
         }
     }
     for(unsigned int i = 0; i <noOfPlayers; ++i){
@@ -302,6 +309,7 @@ void GameEngineIO::loadLid(){
     }
     tilesToAdd.clear();
     ++index;
+
 }
 
 void GameEngineIO::loadBag(){

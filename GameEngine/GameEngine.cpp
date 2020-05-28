@@ -623,6 +623,8 @@ void GameEngine::moveTilesToMosaicStorage(std::shared_ptr<Player> player,
             //automatically move the first player tile to the broken tiles
             player->getMosaicStorage()->getBrokenTiles()->addTile(tileToAdd);
             this->setPlayerStartingNextRound(player->getPlayerNo());
+            std::cout<<"FIRST PLAYER GOING TO: " << player->getPlayerNo() <<std::endl;
+            std::cout<<"FIRST PLAYER GOING TO: " << player->getName() <<std::endl;
 
             if(use2ndFactory)
                 removeOtherFirstPlayerToken(centralFactoryNo);
