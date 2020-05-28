@@ -196,7 +196,7 @@ void GameEngineCallback::printComponentsFor2Players(std::vector<std::shared_ptr<
         int size = tiles.size();
         for(int j = 0; j < size; ++j){
             outputString += colouredLetters(tiles[j]->getColourType());
-            outputString += " ";
+            //outputString += " ";
         }
 
         outputString += "\n";
