@@ -928,9 +928,10 @@ void GameEngine::endOfGamePreparations(){
         geIO->saveGame("actualoutcome.save",getGameModeAsString(),noOfPlayers);
         delete geIO;
         // FOR TESTING PURPOSES REMOVE LATER
-                for(unsigned int i = 0; i < this->commands.size(); ++i){
-                    std::cout<< this->commands[i] << std::endl;
-                }
+        for(unsigned int i = 0; i < this->commands.size(); ++i){
+            std::cout<< this->commands[i] << std::endl;
+        }
+        // FOR TESTING PURPOSES REMOVE LATER
     }
 
     resetGame();
