@@ -272,11 +272,11 @@ int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help
                 // FOR TESTING PURPOSES REMOVE LATER
                 std::string commando = commands[0] + " " + commands[1] + " " + commands[2] + " " + commands[3];
                 this->commands.push_back(commando);
-                if(use2ndFactory && !normalFactoriesAreEmpty() && 
+                if(use2ndFactory && 
                     (commands[1] != "0" && commands[1] != "1" && commands[0] != "save" && commands[0] != "help")){
                     commando = commands[4]; 
+                    this->commands.push_back(commando);
                 }
-                this->commands.push_back(commando);
                 // FOR TESTING PURPOSES REMOVE LATER
             }  
         } else{
@@ -623,7 +623,7 @@ bool GameEngine::moveTilesFromFactory(std::shared_ptr<Player> player,unsigned co
 
     if (toBroken)
         //need to take into consideration wanting to move tiles to broken tiles manually
-        moveTilesToBrokenTiles(player, factoryNumber, type);
+        moveTilesToBrokenTiles(player, factoryNumber, centralFactoryNo, type);
         
     else if (player->getMosaicStorage()->isValidAdd(type, row))
         //player has chosen to put the tiles from the factory somewhere in their mosaic storage
@@ -646,8 +646,6 @@ void GameEngine::moveTilesToMosaicStorage(std::shared_ptr<Player> player,
             //automatically move the first player tile to the broken tiles
             player->getMosaicStorage()->getBrokenTiles()->addTile(tileToAdd);
             this->setPlayerStartingNextRound(player->getPlayerNo());
-            std::cout<<"FIRST PLAYER GOING TO: " << player->getPlayerNo() <<std::endl;
-            std::cout<<"FIRST PLAYER GOING TO: " << player->getName() <<std::endl;
 
             if(use2ndFactory)
                 removeOtherFirstPlayerToken(centralFactoryNo);
@@ -679,7 +677,7 @@ void GameEngine::removeOtherFirstPlayerToken(int centralFactory){
 }
 
 void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player, 
-    unsigned const int factoryNumber, const Type type){
+    unsigned const int factoryNumber, int centralFactoryNo, const Type type){
 
     int maxBrokenTiles = 7;
     if(sixBySixMode)
@@ -697,7 +695,7 @@ void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player,
                 else 
                     mosaicStorage->addTileToDiscardedTiles(tileToAdd);
             } else {
-                factories[0]->addTile(tileToAdd);
+                factories[centralFactoryNo]->addTile(tileToAdd);
             }
         }
 }
@@ -735,22 +733,26 @@ void GameEngine::populateFactories(){
     if(sixBySixMode)
         noOfTilesInFactory = 5;
 
+    
+    bool added = false;
     //start at 1 so we don't populate the central factory
     for(int i = startIndex; i < (startIndex+noOfNormalFactories); i++){
         //fill each factory with noOfTilesInFactory tiles
         for(int j = 0; j < noOfTilesInFactory; ++j){
             if (bag->getSize() > 0) {
                 factories[i]->addTile(bag->getAndRemoveFirstTile());
+                added = true;
             } else {
                 refillBag();
-                if(bag->getSize() == 0){
-                    outOfTiles = true;
-                }else{
+                if(bag->getSize() > 0){
                     factories[i]->addTile(bag->getAndRemoveFirstTile());
                 }
             }
         }
     }
+
+    if(added == false)
+        this->outOfTiles = true;
 }
 
 void GameEngine::populateBagAndShuffle(){
@@ -882,6 +884,7 @@ void GameEngine::getPlayerInputInLoop(int& result, int& help){
     if(result != Error_Message::SUCCESS){
         gec->playerTurnUpdate(this->players[currentTurn]->getName());
     }
+
 }
 
 //loop enables the game to keep playing until someone wins or someone quits
@@ -905,6 +908,7 @@ void GameEngine::gameplayLoop(bool& endOfCommands, bool& continueMenuLoop) {
                 continueMenuLoop = false;
             }
             swapCurrentTurn();
+
         }
         if(!endOfCommands)
             endOfRoundPreparations();

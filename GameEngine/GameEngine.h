@@ -77,7 +77,7 @@ public:
     bool moveTilesFromFactory(std::shared_ptr<Player> player,unsigned const int factoryNumber,int centralFactoryNo,unsigned const int row, const Type type, const bool toBroken);
     void returnFactoryTilesByColour(Type type);
     void moveTilesToMosaicStorage(std::shared_ptr<Player> player, unsigned const int factoryNumber,int centralFactoryNo, unsigned const int row,const Type type);
-    void moveTilesToBrokenTiles(std::shared_ptr<Player> player, unsigned const int factoryNumber, const Type type);
+    void moveTilesToBrokenTiles(std::shared_ptr<Player> player, unsigned const int factoryNumber,int centralFactoryNo, const Type type);
     void moveTilesToLid(std::shared_ptr<Player> player);
     void movePlayerTilesToMosaic();
     void movePlayerTilesToMosaicForGreyMode();
