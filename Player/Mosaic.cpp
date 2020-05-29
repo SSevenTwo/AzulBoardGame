@@ -1,5 +1,4 @@
 #include "headers/Mosaic.h"
-#include <iostream>
 
 Mosaic::Mosaic(std::string gameMode){
     determineGameMode(gameMode);
@@ -324,7 +323,6 @@ int Mosaic::numFullCols() {
             if(grid[row][col] != nullptr){
                 ++counter;
                 if(counter == maxNoTiles){
-                    std::cout<<"AROO"<<std::endl;
                     ++numCols;
                 }
             }
