@@ -33,5 +33,25 @@ Test 14: Tests whether any remaining tiles go into broken tiles automatically wh
 Test 15: Tests whether the first player tile goes into broken tiles correctly when the player chooses tiles from the central factory for the very first time that round. 
 Test 16: Tested if the bag is able to be refilled from the lid when it has run out. This is visible if factories are populated correctly. 
 Test 17: Tested various invalid commands to ensure that there would be no segmentation fault as a result.
-Test 18: Tested various invalid menu commands to ensure that there would be no segmentation fault as a result.
+Test 18: Tests a full game of grey mode with 2 players and 1 central factory.
+Test 19: Tests 1 round of grey mode with 3 players and 2 central factory.
+Test 20: Tests functionality of 2 central factories
+Test 21: Tests a full game of grey mode with 2 players and 2 central factories.
+Test 22: Tests a full game of grey mode with 3 players and 1 central factory.
+Test 23: Tests a full game of grey mode with 3 players and 2 central factories.
+Test 24: Tests a full game of grey mode with 4 players and 1 central factories.
+Test 25: Tests a full game of grey mode with 4 players and 2 central factories.
+Test 26: Tests a full game of 6x6 mode with 2 players and 1 central factory.
+Test 27: Tests a full game of 6x6 mode with 2 players and 2 central factories.
+Test 28: Tests a full game of 6x6 mode with 3 players and 1 central factory.
+Test 29: Tests a full game of 6x6 mode with 3 players and 2 central factories.
+Test 30: Tests a full game of 6x6 mode with 4 players and 1 central factory.
+Test 31: Tests a full game of 6x6 mode with 4 players and 2 central factories.
+Test 32: Tests a full game of standard mode with 2 players and 2 central factories.
+Test 33: Tests a full game of standard mode with 3 palyers and 1 central factory.
+Test 34: Tests a full game of standard mode with 3 players and 2 central factories.
+Test 35: Tests a full game of standard mode with 4 players and 1 central factory.
+Test 36: Tests a full game of standard mode with 4 players and 2 central factories.
+Test 37: Test that ensures correct functionality of 8 broken tiles in 6x6 mode.
+Test 38: Tested various invalid menu commands to ensure that there would be no segmentation fault as a result.
 
