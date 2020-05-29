@@ -18,21 +18,32 @@ Menu::~Menu(){
 }
 
 void Menu::printWelcome() {
-    std::cout << "\033[1;31m********************" << std::endl;
-    std::cout << "Welcome to Azul!" << std::endl;
-    std::cout << "********************\033[0m" << std::endl;
+    std::cout << "\033[1;31m\t\t\t     W E L C O M E    T O " << std::endl;
+    std::cout<< ".----------------.  .----------------.  .----------------.  .----------------."<<std::endl;
+    std::cout<<"| .--------------. || .--------------. || .--------------. || .--------------. |"<<std::endl;
+    std::cout<<"| |      __      | || |   ________   | || | _____  _____ | || |   _____      | |"<<std::endl;
+    std::cout<<"| |     /  \\     | || |  |  __   _|  | || ||_   _||_   _|| || |  |_   _|     | |"<<std::endl;
+    std::cout<<"| |    / /\\ \\    | || |  |_/  / /    | || |  | |    | |  | || |    | |       | |"<<std::endl;
+    std::cout<<"| |   / ____ \\   | || |     .'.' _   | || |  | '    ' |  | || |    | |   _   | |"<<std::endl;
+    std::cout<<"| | _/ /    \\ \\_ | || |   _/ /__/ |  | || |   \\ `--' /   | || |   _| |__/ |  | |"<<std::endl;
+    std::cout<<"| ||____|  |____|| || |  |________|  | || |    `.__.'    | || |  |________|  | |"<<std::endl;
+    std::cout<<"| |              | || |              | || |              | || |              | |"<<std::endl;
+    std::cout<<"| '--------------' || '--------------' || '--------------' || '--------------' |"<<std::endl;
+    std::cout<<" '----------------'  '----------------'  '----------------\'  \'----------------\' " <<std::endl;
+    std::cout << "\033[0m" << std::endl;
 }
 
 void Menu::runMenu() {
-    std::cout << "\033[1m----" << std::endl;
+    std::cout << "\033[1m********************************************************************************" << std::endl;
     std::cout << "Menu" << std::endl;
-    std::cout << "----\033[0m" << std::endl;
+    std::cout << "********************************************************************************\033[0m" << std::endl;
     std::cout << "1. New Standard Game" << std::endl;
     std::cout << "2. New Grey Board Game" << std::endl;
     std::cout << "3. New 6x6 Game" << std::endl;
     std::cout << "4. Load Game" << std::endl;
-    std::cout << "5. Credits (Show Student Information)" << std::endl;
-    std::cout << "6. Quit" << std::endl << std::endl;
+    std::cout << "5. Help / Game Information" << std::endl;
+    std::cout << "6. Credits (Show Student Information)" << std::endl;
+    std::cout << "7. Quit" << std::endl << std::endl;
 
 }
 
@@ -91,7 +102,10 @@ bool Menu::runSelection(unsigned const int selection) {
             std::cerr<< e << std::endl;
         }
         delete gameEngineIO;
-        
+    } else if (selection == OPTIONS::HELP_MENU) {
+        std::cout << "Play the game by entering the appropriate command into the console." << std::endl;
+        std::cout << "At any time during the game, type \"help\" for information on how format the input" << std::endl;
+        std::cout << "For game rules please visit: https://www.ultraboardgames.com/azul/game-rules.php" <<std::endl;
     } else if (selection == OPTIONS::CREDITS) {
         std::cout << "------------------------" << std::endl << std::endl;
         printCredits("Ian Nguyen", "s3788210");
@@ -162,4 +176,6 @@ void Menu::determinePlayersAndFactories(std::string playerNames[], int& noOfPlay
             std::cout << playerNames[i] << ", ";
     }
     std::cout << "!\033[0m" << std::endl;
+
+    std::cout << "Note: Type \"help\" at any point for information." << std::endl;
 }

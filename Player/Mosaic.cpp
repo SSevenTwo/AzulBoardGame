@@ -1,4 +1,5 @@
 #include "headers/Mosaic.h"
+#include <iostream>
 
 Mosaic::Mosaic(std::string gameMode){
     determineGameMode(gameMode);
@@ -89,16 +90,17 @@ bool Mosaic::findFullCol(unsigned int col){
 
 int Mosaic::noOfFiveColours(){
     int timesGotAll5Colours = 0;
+    unsigned int fiveColors = 5;
 
-    if(this->noOfBlacks == maxNoTiles)
+    if(this->noOfBlacks >= fiveColors)
         ++timesGotAll5Colours;
-    if(this->noOfReds == maxNoTiles)
+    if(this->noOfReds >= fiveColors)
         ++timesGotAll5Colours;
-    if(this->noOfDarkBlues == maxNoTiles)
+    if(this->noOfDarkBlues >= fiveColors)
         ++timesGotAll5Colours;
-    if(this->noOfLightBlues == maxNoTiles)
+    if(this->noOfLightBlues >= fiveColors)
         ++timesGotAll5Colours;
-    if(this->noOfYellows == maxNoTiles)
+    if(this->noOfYellows >= fiveColors)
         ++timesGotAll5Colours;
 
     return timesGotAll5Colours;
@@ -322,6 +324,7 @@ int Mosaic::numFullCols() {
             if(grid[row][col] != nullptr){
                 ++counter;
                 if(counter == maxNoTiles){
+                    std::cout<<"AROO"<<std::endl;
                     ++numCols;
                 }
             }

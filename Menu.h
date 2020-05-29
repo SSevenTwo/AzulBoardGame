@@ -12,6 +12,7 @@ enum OPTIONS {
     NEW_GREY_GAME,
     NEW_6X6_GAME,
     LOAD_GAME,
+    HELP_MENU,
     CREDITS,
     QUIT,
 };
