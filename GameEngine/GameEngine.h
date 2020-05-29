@@ -101,8 +101,8 @@ public:
     int getPlayerStartingNextRound() const;
     std::shared_ptr<Player> getCurrentPlayer() const;
     std::shared_ptr<Factory> getFactory(unsigned const int number) const;
-    LinkedList* getTileBag() const;
-    LinkedList* getBoxLid() const;
+    std::shared_ptr<LinkedList> getTileBag() const;
+    std::shared_ptr<LinkedList> getBoxLid() const;
 
     //Getters for save functionality
     int getNoOfCentralFactories() const;
@@ -116,11 +116,11 @@ public:
     void setPlayerStartingNextRound(int playerNo);
 
 private:
-    GameEngineCallback* gec;
+    std::shared_ptr<GameEngineCallback> gec;
     std::vector<std::shared_ptr<Player>> players;
     std::vector<std::shared_ptr<Factory>> factories;
-    LinkedList* bag;
-    LinkedList* boxLid;
+    std::shared_ptr<LinkedList> bag;
+    std::shared_ptr<LinkedList> boxLid;
     bool outOfTiles;
     int noOfPlayers;
     int noOfCentralFactories;

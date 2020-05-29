@@ -17,10 +17,10 @@ GameEngine::GameEngine(const int seed) {
 }
 
 void GameEngine::commonGameEngine(){
-    gec = new GameEngineCallback();
+    gec = std::make_shared<GameEngineCallback>();
 
-    this->bag = new LinkedList();
-    this->boxLid = new LinkedList();
+    this->bag = std::make_shared<LinkedList>();
+    this->boxLid = std::make_shared<LinkedList>();
 
     this->currentTurn = 0;
     this->playerStartingNextRound = 0;
@@ -47,10 +47,6 @@ void GameEngine::instantiateFactories(){
 }
 
 GameEngine::~GameEngine() {
-
-    delete gec;
-    delete bag;   
-    delete boxLid;
 
     if(factories.size()>0){
         for(int i = 0;  i < (noOfCentralFactories + noOfNormalFactories); i++){
@@ -103,11 +99,11 @@ std::shared_ptr<Factory> GameEngine::getFactory(unsigned const int number) const
     return factories[number];
 }
 
-LinkedList* GameEngine::getTileBag() const{
+std::shared_ptr<LinkedList> GameEngine::getTileBag() const{
     return bag;
 }
 
-LinkedList* GameEngine::getBoxLid() const{
+std::shared_ptr<LinkedList> GameEngine::getBoxLid() const{
     return boxLid;
 }
 
