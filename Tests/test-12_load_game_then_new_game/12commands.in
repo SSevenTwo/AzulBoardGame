@@ -1,4 +1,4 @@
-2 12initialsave.save
+4 12initialsave.save
 turn 3 R 2
 turn 5 U 2
 turn 1 Y 1
@@ -45,8 +45,10 @@ turn 0 B 5
 turn 0 U 5
 turn 0 Y 3
 1
+2
 Joe
 Moe
+1
 turn 3 R 2
 turn 5 U 2
 turn 1 Y 1

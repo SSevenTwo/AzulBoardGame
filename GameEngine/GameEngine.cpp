@@ -689,6 +689,16 @@ void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player,
         int size = allTiles.size();
         for (int i = 0; i < size; ++i) {
             std::shared_ptr<Tile> tileToAdd = allTiles[i];
+            if(tileToAdd->getType() == Type::FIRST_PLAYER){
+                if(brokenTiles->getSize() < maxBrokenTiles)
+                    brokenTiles->addTile(tileToAdd);
+                else 
+                    mosaicStorage->addTileToDiscardedTiles(tileToAdd);
+
+                this->setPlayerStartingNextRound(player->getPlayerNo());
+                if(use2ndFactory)
+                    removeOtherFirstPlayerToken(centralFactoryNo);
+            }
             if (allTiles[i]->getType() == type) {
                 if(brokenTiles->getSize() < maxBrokenTiles)
                     brokenTiles->addTile(tileToAdd);
