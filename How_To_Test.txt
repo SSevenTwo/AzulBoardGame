@@ -52,6 +52,9 @@ Test 33: Tests a full game of standard mode with 3 palyers and 1 central factory
 Test 34: Tests a full game of standard mode with 3 players and 2 central factories.
 Test 35: Tests a full game of standard mode with 4 players and 1 central factory.
 Test 36: Tests a full game of standard mode with 4 players and 2 central factories.
-Test 37: Test that ensures correct functionality of 8 broken tiles in 6x6 mode.
-Test 38: Tested various invalid menu commands to ensure that there would be no segmentation fault as a result.
+Test 37: Tests full row point calculations in 6x6 mode.
+Test 38: Tests full column point calculations in 6x6 mode.
+Test 39: Tests point calculation when player has 5 of the same colour in 6x6 mode.
+Test 40: Test that ensures correct functionality of 8 broken tiles in 6x6 mode.
+Test 41: Tested various invalid menu commands to ensure that there would be no segmentation fault as a result.
 
