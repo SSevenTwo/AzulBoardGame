@@ -1,5 +1,4 @@
 #include "headers/Player.h"
-#include <iostream>
 
 Player::Player(std::string name, int playerNo, std::string gameMode){
     this->points = 0;

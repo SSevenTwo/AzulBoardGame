@@ -1,5 +1,4 @@
 #include "headers/Factory.h"
-#include <iostream>
 
 Factory::Factory(){
     this->hasFirstPlayerToken = false;

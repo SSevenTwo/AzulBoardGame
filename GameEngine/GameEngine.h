@@ -11,11 +11,6 @@
 #include <sstream>
 #include<vector>
 
-#define NUM_NORMAL_FACTORIES    5
-#define NUM_PLAYERS             2
-#define NUM_FACTORIES           6
-#define MAX_ROWS                5
-
 enum Error_Message{
     INVALID_COMMAND,
     SUCCESS,
