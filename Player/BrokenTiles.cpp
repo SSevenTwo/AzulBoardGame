@@ -1,5 +1,4 @@
 #include "headers/BrokenTiles.h"
-#include <iostream>
 
 BrokenTiles::BrokenTiles(int noOfTiles) {
     this->maxNoOfTiles = noOfTiles;

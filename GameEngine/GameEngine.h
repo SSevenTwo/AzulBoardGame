@@ -57,7 +57,7 @@ public:
     void calculatePointsPerRound();
     void calculateEndGamePoints();
     void resetGame();
-    std::string help(int help);
+    std::string help(const unsigned int help);
 
     //Player input validation
     void getPlayerInputInLoop(int& result, int& help);
@@ -90,7 +90,7 @@ public:
     void clearBoxLid();
     void refillBag();
     bool changeType(Type& tileType, char tileChar);
-    void removeOtherFirstPlayerToken(int centralFactoryNo);
+    void removeOtherFirstPlayerToken(const unsigned int centralFactoryNo);
     
     //Getters
     std::string getGameModeAsString();
@@ -136,7 +136,6 @@ private:
 
     // For testing purposes
     bool testing;
-    std::vector<std::string> commands;
 
 };
 

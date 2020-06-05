@@ -18,10 +18,8 @@ GameEngine::GameEngine(const int seed) {
 
 void GameEngine::commonGameEngine(){
     gec = std::make_shared<GameEngineCallback>();
-
     this->bag = std::make_shared<LinkedList>();
     this->boxLid = std::make_shared<LinkedList>();
-
     this->currentTurn = 0;
     this->playerStartingNextRound = 0;
     this->noOfPlayers = 0;
@@ -35,15 +33,11 @@ void GameEngine::commonGameEngine(){
 
 void GameEngine::instantiateFactories(){
 
-    for(int i = 0; i<noOfCentralFactories; ++i){
+    for(int i = 0; i<(noOfCentralFactories+noOfNormalFactories); ++i){
         std::shared_ptr<Factory> factory = std::make_shared<Factory>();
         this->factories.push_back(factory);
     }
 
-    for(int i = 0; i < noOfNormalFactories; ++i){
-        std::shared_ptr<Factory> factory = std::make_shared<Factory>();
-        this->factories.push_back(factory);
-    }
 }
 
 GameEngine::~GameEngine() {
@@ -190,11 +184,11 @@ void GameEngine::determineNoOfPlayersAndFactories(const unsigned int noOfPlayers
         this->noOfNormalFactories = 9;
 
     this->noOfCentralFactories = noOfCentralFactories;
-    if(noOfCentralFactories == 2){
+    if(noOfCentralFactories == 2)
         this->use2ndFactory = true;
-    }
 }
 
+// The main method for validating and completing player turn commands
 int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help){
     Input input;
     result = Error_Message::SUCCESS;
@@ -264,16 +258,6 @@ int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help
                         result = Error_Message::INVALID_MOVE;
                     }
                 }
-
-                // FOR TESTING PURPOSES REMOVE LATER
-                std::string commando = commands[0] + " " + commands[1] + " " + commands[2] + " " + commands[3];
-                this->commands.push_back(commando);
-                if(use2ndFactory && 
-                    (commands[1] != "0" && commands[1] != "1" && commands[0] != "save" && commands[0] != "help")){
-                    commando = commands[4]; 
-                    this->commands.push_back(commando);
-                }
-                // FOR TESTING PURPOSES REMOVE LATER
             }  
         } else{
             result = Error_Message::INVALID_COMMAND;
@@ -283,13 +267,6 @@ int GameEngine::playerTurn(int& result, std::string playerTurnCommand, int& help
         geIO->saveGame(commands[1], getGameModeAsString(), this->noOfPlayers);
         result = Error_Message::SAVED;
         delete geIO;
-
-                // FOR TESTING PURPOSES REMOVE LATER
-                for(unsigned int i = 0; i < this->commands.size(); ++i){
-                    std::cout<< this->commands[i] << std::endl;
-                }
-
-
     }else if (commands[0] == "help") {
         result = Error_Message::HELP;
         help = 1;
@@ -589,12 +566,6 @@ bool GameEngine::askForMosaicRow(std::shared_ptr<MosaicStorage> playerMosaicStor
         gec->promptUser(interpretPlayerTurn(Error_Message::HELP, 3));
     }
 
-    // FOR TESTING PURPOSES REMOVE LATER
-    if(success){
-        this->commands.push_back(colAsString);
-    }
-    // FOR TESTING PURPOSES REMOVE LATER
-
     return success;        
 }
 
@@ -655,7 +626,8 @@ void GameEngine::moveTilesToMosaicStorage(std::shared_ptr<Player> player,
     }
 }
 
-void GameEngine::removeOtherFirstPlayerToken(int centralFactory){
+// Method is used for removing any other first player tokens in other central factories
+void GameEngine::removeOtherFirstPlayerToken(const unsigned int centralFactory){
     std::shared_ptr<Factory> factory = nullptr;
     if( centralFactory == 0)
         factory = factories[1];
@@ -682,28 +654,28 @@ void GameEngine::moveTilesToBrokenTiles(std::shared_ptr<Player> player,
     std::shared_ptr<MosaicStorage> mosaicStorage = player->getMosaicStorage();
     std::shared_ptr<BrokenTiles> brokenTiles = mosaicStorage->getBrokenTiles();
     
-        int size = allTiles.size();
-        for (int i = 0; i < size; ++i) {
-            std::shared_ptr<Tile> tileToAdd = allTiles[i];
-            if(tileToAdd->getType() == Type::FIRST_PLAYER){
-                if(brokenTiles->getSize() < maxBrokenTiles)
-                    brokenTiles->addTile(tileToAdd);
-                else 
-                    mosaicStorage->addTileToDiscardedTiles(tileToAdd);
+    int size = allTiles.size();
+    for (int i = 0; i < size; ++i) {
+        std::shared_ptr<Tile> tileToAdd = allTiles[i];
+        if(tileToAdd->getType() == Type::FIRST_PLAYER){
+            if(brokenTiles->getSize() < maxBrokenTiles)
+                brokenTiles->addTile(tileToAdd);
+            else 
+                mosaicStorage->addTileToDiscardedTiles(tileToAdd);
 
-                this->setPlayerStartingNextRound(player->getPlayerNo());
-                if(use2ndFactory)
-                    removeOtherFirstPlayerToken(centralFactoryNo);
-            }
-            if (allTiles[i]->getType() == type) {
-                if(brokenTiles->getSize() < maxBrokenTiles)
-                    brokenTiles->addTile(tileToAdd);
-                else 
-                    mosaicStorage->addTileToDiscardedTiles(tileToAdd);
-            } else {
-                factories[centralFactoryNo]->addTile(tileToAdd);
-            }
+            this->setPlayerStartingNextRound(player->getPlayerNo());
+            if(use2ndFactory)
+                removeOtherFirstPlayerToken(centralFactoryNo);
         }
+        if (allTiles[i]->getType() == type) {
+            if(brokenTiles->getSize() < maxBrokenTiles)
+                brokenTiles->addTile(tileToAdd);
+            else 
+                mosaicStorage->addTileToDiscardedTiles(tileToAdd);
+        } else {
+            factories[centralFactoryNo]->addTile(tileToAdd);
+        }
+    }
 }
 
 //called at the end of each round to get rid of no longer usable tiles
@@ -741,9 +713,8 @@ void GameEngine::populateFactories(){
 
     
     bool added = false;
-    //start at 1 so we don't populate the central factory
+    //start at 1 or 2 so we don't populate the central factories
     for(int i = startIndex; i < (startIndex+noOfNormalFactories); i++){
-        //fill each factory with noOfTilesInFactory tiles
         for(int j = 0; j < noOfTilesInFactory; ++j){
             if (bag->getSize() > 0) {
                 factories[i]->addTile(bag->getAndRemoveFirstTile());
@@ -756,13 +727,12 @@ void GameEngine::populateFactories(){
             }
         }
     }
-
+    // If no tiles were added, then that means the game has run out of tiles. End the game.
     if(added == false)
         this->outOfTiles = true;
 }
 
 void GameEngine::populateBagAndShuffle(){
-    //populate array for later shuffling
     int bagToShuffleSize = 100;
     if(this->sixBySixMode)
         bagToShuffleSize = 120;
@@ -781,7 +751,6 @@ void GameEngine::populateBagAndShuffle(){
 
     GameEngine::shuffle(bagToShuffle, bagToShuffleSize);
     
-    //add to linked list format (which is the one used for the rest of the game)
     for(int i = 0; i < bagToShuffleSize; i++){
         bag->addTileToFront(bagToShuffle[i]);
         bagToShuffle[i] = nullptr;
@@ -854,11 +823,12 @@ std::string GameEngine::interpretPlayerTurn(const int result, int helpNo){
     return toReturn;
 }
 
-/* 1 = normal turn
+/* Interperet the following integers as: 
+ * 1 = normal turn
  * 2 = choose central factory
  * 3 = choose mosaic column for grey mode
  */
-std::string GameEngine::help(int help){
+std::string GameEngine::help(const unsigned int help){
     std::string toReturn = "";
     if(help == 1){
         toReturn = "Enter a command in the following format: turn <factory number>";        
@@ -878,7 +848,7 @@ std::string GameEngine::help(int help){
     return toReturn;
 }
 
-
+// Asks for player turn commands
 void GameEngine::getPlayerInputInLoop(int& result, int& help){
     Input input;
     std::string playerCommand = input.getString();
@@ -933,11 +903,6 @@ void GameEngine::endOfGamePreparations(){
         GameEngineIO* geIO = new GameEngineIO(this);
         geIO->saveGame("actualoutcome.save",getGameModeAsString(),noOfPlayers);
         delete geIO;
-        // FOR TESTING PURPOSES REMOVE LATER
-        for(unsigned int i = 0; i < this->commands.size(); ++i){
-            std::cout<< this->commands[i] << std::endl;
-        }
-        // FOR TESTING PURPOSES REMOVE LATER
     }
 
     resetGame();
@@ -954,8 +919,6 @@ void GameEngine::calculateEndGamePoints() {
 }
 
 void GameEngine::resetGame(){
-    
-    //don't delete components as they get instantiated with GE
     for(int i = 0; i < (noOfCentralFactories + noOfNormalFactories); i++){
         factories[i]->clear();
     }

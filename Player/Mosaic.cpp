@@ -3,7 +3,7 @@
 Mosaic::Mosaic(std::string gameMode){
     determineGameMode(gameMode);
 
-    // Making 5x5 2d array for tiles
+    // Making 2d array for tiles
     this->grid = new std::shared_ptr<Tile>*[maxNoRows];
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         grid[row] = new std::shared_ptr<Tile>[maxNoCols];
@@ -20,15 +20,19 @@ Mosaic::Mosaic(std::string gameMode){
 }
 
 Mosaic::~Mosaic(){
-    // delete tiles
+    // delete tiles and then the row
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         for (unsigned int col = 0; col < maxNoCols; ++col) {
             if(grid[row][col] != nullptr){
                 grid[row][col] = nullptr;
             }
         }
+        delete[] grid[row];
+        grid[row] = nullptr;
     }
 
+    //deleting grid
+    delete[] grid;
     this->grid = nullptr;
     this->pointsThisRound = 0;
 }
@@ -256,6 +260,7 @@ std::string Mosaic::rowToString(int index){
     return string;
 }
 
+// Used for outputting the tiles in console with colour
 std::string Mosaic::colourTileInConsole(char type){
     std::string toReturn = "";
 

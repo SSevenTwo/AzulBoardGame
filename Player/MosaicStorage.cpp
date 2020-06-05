@@ -1,5 +1,4 @@
 #include "headers/MosaicStorage.h"
-#include <iostream>
 
 MosaicStorage::MosaicStorage(std::string gameMode) {
 
@@ -21,9 +20,10 @@ MosaicStorage::MosaicStorage(std::string gameMode) {
 MosaicStorage::~MosaicStorage() {
     brokenTiles = nullptr;
 
-
     for (unsigned int row = 0; row < maxNoRows; ++row) {
         clearRow(row);
+        delete[] grid[row];
+        grid[row] = nullptr;
     }
     delete[] grid;
     grid = nullptr;

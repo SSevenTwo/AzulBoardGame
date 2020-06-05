@@ -33,6 +33,7 @@ void GameEngineIO::loadGame(std::string fileName) {
 
     ifs.close();
 
+    // Legacy saves are milestone 1 save files
     if(gameInfo.size() == LEGACY_SAVE){
         setLegacySaveSettings();
     }
@@ -59,6 +60,7 @@ void GameEngineIO::loadGame(std::string fileName) {
     loadSeed();
 }
 
+// Runs when a milestone 1 save file is detected
 void GameEngineIO::setLegacySaveSettings(){
     this->legacySave = true;
     this->standard = true;
@@ -88,8 +90,8 @@ void GameEngineIO::determineNoOfPlayers(std::string playerNo){
         this->noOfFactories = 9;
 }
 
+//Determine game mode
 void GameEngineIO::determineGameMode(std::string gameMode){
-     //Determine game mode
     if(gameMode == "grey"){
         this->greyMode = true;
         this->sixBySixMode = false;
