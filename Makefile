@@ -1,6 +1,6 @@
 .default: all
 
-all: GameEngineIO.o GameEngineCallback.o GameEngine.o Player.o MosaicStorage.o Mosaic.o BrokenTiles.o Board.o Factory.o Tile.o Node.o LinkedList.o Input.o Menu.o main.o assign2
+all: GameEngineIO.o GameEngineCallback.o GameEngine.o Player.o MosaicStorage.o Mosaic.o BrokenTiles.o Factory.o Tile.o Node.o LinkedList.o Input.o Menu.o main.o assign2
 
 GameEngineIO.o: ./GameEngine/GameEngineIO.cpp
 	g++ -Wall -Werror -std=c++14 -g -O -c ./GameEngine/GameEngineIO.cpp 
@@ -22,9 +22,6 @@ Mosaic.o: ./Player/Mosaic.cpp
 
 BrokenTiles.o: ./Player/BrokenTiles.cpp 
 	g++ -Wall -Werror -std=c++14 -g -O -c ./Player/BrokenTiles.cpp 
-
-Board.o: ./Player/Board.cpp 
-	g++ -Wall -Werror -std=c++14 -g -O -c ./Player/Board.cpp 
 
 Factory.o: ./Components/Factory.cpp 
 	g++ -Wall -Werror -std=c++14 -g -O -c ./Components/Factory.cpp 
@@ -48,7 +45,7 @@ main.o: main.cpp
 	g++ -Wall -Werror -std=c++14 -g -O -c main.cpp
 
 assign2: 
-	g++ -Wall -Werror -std=c++14 -g -O -o assign2 GameEngineIO.o GameEngineCallback.o GameEngine.o Player.o MosaicStorage.o Mosaic.o BrokenTiles.o Board.o Factory.o Tile.o Node.o LinkedList.o Input.o Menu.o main.o
+	g++ -Wall -Werror -std=c++14 -g -O -o assign2 GameEngineIO.o GameEngineCallback.o GameEngine.o Player.o MosaicStorage.o Mosaic.o BrokenTiles.o Factory.o Tile.o Node.o LinkedList.o Input.o Menu.o main.o
 
 clean:
 	rm -f assign2 *.o
